@@ -1,6 +1,6 @@
 <?php require(basetpl_header); ?>
 
-<div class="title"><img src="<?=dir_img?>title.jpg"/></div>
+<div class="title"><img src="<?=domain.dir_img?>title.jpg"/></div>
 <br/>
 <div class="index_buttons">
     <span class="index_big_button">

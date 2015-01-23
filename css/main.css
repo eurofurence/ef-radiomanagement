@@ -17,8 +17,62 @@ div.title {
 
 div.page_title {
     color: #666666;
-    font-size: 40px;
+    font-size: 35px;
     font-weight: bold;
+}
+
+div.content_wrapper {
+    padding-top: 10px;
+}
+
+a:link, a:visited {
+    color: #FFFFFF;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+a:hover, a:active {
+    color: #FFFFFF;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+hr.header_spacer {
+    border: none;
+    background-color: #CCCCCC;
+    height: 1px;
+    margin-right: 10px;
+}
+
+
+/* ##### Navigation-Styles ##### */
+hr.navi_spacer {
+    height: 1px;
+    background-color: #FFFFFF;
+    border: none;
+    width: 190px;
+}
+
+div.navi_wrapper {
+    float: left;
+    height: 100%;
+    width: 200px;
+    background-color: #006357;
+    margin-right: 10px;
+    color: #FFFFFF;
+}
+
+div.navi_logininfo {
+    padding-left: 5px;
+    padding-right: 5px;
+    font-size: 11px;
+}
+
+ul.navi_linkcontainer {
+    margin-left: -15px;
+    margin-top: 0px;
+
+    list-style-image: url('../img/bullet.png');
 }
 
 

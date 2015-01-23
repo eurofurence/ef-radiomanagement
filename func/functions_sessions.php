@@ -6,6 +6,7 @@ class sessions {
     var $userLevel;
     var $userName;
     var $userId;
+    var $regId;
 
     /* Error handling vars */
     var $error_login_not_found;
@@ -26,6 +27,7 @@ class sessions {
         $_SESSION["ul"] ? $this->userLevel=$_SESSION["ul"] : $this->userLevel=0;
         $_SESSION["un"] ? $this->userName=$_SESSION["un"] : $this->userName=false;
         $_SESSION["ui"] ? $this->userId=$_SESSION["ui"] : $this->userId=false;
+        $_SESSION["ri"] ? $this->regId=$_SESSION["ri"] : $this->regId=false;
     }
 
     /* login()
@@ -73,6 +75,7 @@ class sessions {
         $_SESSION["ul"] = $result->{"userlevel"};
         $_SESSION["un"] = $result->{"nickname"};
         $_SESSION["ui"] = $result->{"userid"};
+        $_SESSION["ri"] = $result->{"regid"};
 
         //Tell system, that we are now logged into Skynet(tm)
         $this->loginSuccessful = true;
@@ -108,6 +111,20 @@ class sessions {
         return $this->userLevel;
     }
 
+    /* getUserLevelText()
+     *
+     * This function returns userLevel as String
+     */
+    public function getUserLevelText() {
+        switch($this->userLevel) {
+            case 0: return "Not logged in"; break;
+            case 1: return "User"; break;
+            case 2: return "Moderator"; break;
+            case 3: return "Admin"; break;
+            default: return "Unknown!"; break;
+        }
+    }
+
     /* getUserName()
      *
      * Getter for $this->userName
@@ -122,6 +139,14 @@ class sessions {
      */
     public function getUserId() {
         return $this->userId;
+    }
+
+    /* getRegId()
+     *
+     * Getter for $this->regId
+     */
+    public function getRegId() {
+        return $this->regId;
     }
 
     /* loginSuccessful()

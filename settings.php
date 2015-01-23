@@ -23,7 +23,6 @@ define(dir_img, "img/");
 define(dir_js, "js/");
 define(dir_maintpl, "tpl/");
 define(dir_pagetpl, "tpl/pages/");
-define(dir_iftpl, "tpl/interfaces/");
 define(dir_navis, "tpl/navis/");
 define(dir_ext, "ext/");
 
@@ -51,6 +50,7 @@ $_TEMPLATES = array();
 $_TEMPLATES[] = array("alias" => "index", "file" => dir_pagetpl."index.tpl.php", "accessLevel" => 0);
 $_TEMPLATES[] = array("alias" => "callsigns", "file" => dir_pagetpl."callsigns.tpl.php", "accessLevel" => 0);
 $_TEMPLATES[] = array("alias" => "login", "file" => dir_pagetpl."login.tpl.php", "accessLevel" => 0);
+$_TEMPLATES[] = array("alias" => "logout", "file" => dir_pagetpl."logout.tpl.php", "accessLevel" => 0);
 $_TEMPLATES[] = array("alias" => "overview", "file" => dir_pagetpl."overview.tpl.php", "accessLevel" => 1);
 
 ?>
