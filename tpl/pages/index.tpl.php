@@ -1,14 +1,18 @@
-<?php require(dir_maintpl . "header.tpl.php"); ?>
+<?php require(basetpl_header); ?>
 
-<div class="index_title"><img src="<?=dir_img?>title.jpg"/></div>
+<div class="title"><img src="<?=dir_img?>title.jpg"/></div>
 <br/>
 <div class="index_buttons">
     <span class="index_big_button">
-        <div>Callsigns</div>
+        <a class="index_big_button" href="<?=domain?>index.php?p=callsigns">
+            <div>Callsigns</div>
+        </a>
     </span>
     <span class="index_big_button">
-        <div>Login</div>
+        <a class="index_big_button" href="<?=domain?>index.php?p=login">
+            <div>Login</div>
+        </a>
     </span>
 </div>
 
-<?php require(dir_maintpl . "footer.tpl.php"); ?>
+<?php require(basetpl_footer); ?>

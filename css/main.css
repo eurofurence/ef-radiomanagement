@@ -2,10 +2,11 @@
 body {
     background-color: #FFFFFF;
     margin: 0px 0px 0px 0px;
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 12px;
 }
 
-/* ##### index-Styes ##### */
-div.index_title {
+div.title {
     background-color: #006357;
     min-width: 350px;
     width: 100%;
@@ -14,6 +15,14 @@ div.index_title {
     text-align: center;
 }
 
+div.page_title {
+    color: #666666;
+    font-size: 40px;
+    font-weight: bold;
+}
+
+
+/* ##### index-Styes ##### */
 div.index_buttons {
     width: 100%;
     text-align: center;
@@ -49,4 +58,32 @@ span.index_big_button {
 span.index_big_button:hover {
     background-color: rgba(0, 99, 87, 0.70);
     color: #FFFFFF;
+}
+
+a.index_big_button {
+    border: none;
+    text-decoration: none;
+    color: #666666;
+
+    -webkit-transition-property: color;
+    -webkit-transition-duration: 0.5s;
+    -webkit-transition-timing-function: ease;
+    transition-property: color;
+    transition-duration: 0.5s;
+    transition-timing-function: ease;
+}
+
+a.index_big_button:hover {
+    color: #FFFFFF;
+}
+
+/* ##### Login styles ##### */
+div.login_content_container {
+    width: 100%;
+    text-align: center;
+}
+
+div.login_error {
+    font-weight: bold;
+    color: #EE0000;
 }

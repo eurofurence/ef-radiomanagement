@@ -15,6 +15,7 @@ define(func_core, "func/functions_core.php");
 define(func_database, "func/functions_database.php");
 define(func_template, "func/functions_template.php");
 define(func_sessions, "func/functions_sessions.php");
+define(func_bindings, "func/functions_bindings.php");
 
 /* DEFINES for directories */
 define(dir_css, "css/");
@@ -25,6 +26,11 @@ define(dir_pagetpl, "tpl/pages/");
 define(dir_iftpl, "tpl/interfaces/");
 define(dir_navis, "tpl/navis/");
 define(dir_ext, "ext/");
+
+/* DEFINES for base templates */
+define(basetpl_header, dir_maintpl."header.tpl.php");
+define(basetpl_navi, dir_maintpl."navi.tpl.php");
+define(basetpl_footer, dir_maintpl."footer.tpl.php");
 
 /* Basic settings */
 $_SETTINGS = array (
@@ -43,5 +49,8 @@ $_SETTINGS = array (
  */
 $_TEMPLATES = array();
 $_TEMPLATES[] = array("alias" => "index", "file" => dir_pagetpl."index.tpl.php", "accessLevel" => 0);
+$_TEMPLATES[] = array("alias" => "callsigns", "file" => dir_pagetpl."callsigns.tpl.php", "accessLevel" => 0);
+$_TEMPLATES[] = array("alias" => "login", "file" => dir_pagetpl."login.tpl.php", "accessLevel" => 0);
+$_TEMPLATES[] = array("alias" => "overview", "file" => dir_pagetpl."overview.tpl.php", "accessLevel" => 1);
 
 ?>
