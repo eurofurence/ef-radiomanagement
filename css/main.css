@@ -1,0 +1,52 @@
+/* ##### General Styles ##### */
+body {
+    background-color: #FFFFFF;
+    margin: 0px 0px 0px 0px;
+}
+
+/* ##### index-Styes ##### */
+div.index_title {
+    background-color: #006357;
+    min-width: 350px;
+    width: 100%;
+    height: 150px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+div.index_buttons {
+    width: 100%;
+    text-align: center;
+}
+
+span.index_big_button {
+    display: inline-block;
+
+    width: 400px;
+    height: 400px;
+    background-color: rgba(0, 99, 87, 0.20);
+    margin: 15px 15px 15px 15px;
+
+    text-align: center;
+    line-height: 400px;
+    vertical-align: middle;
+    color: #666666;
+    font-size: 30px;
+    font-weight: bold;
+
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    border-radius: 20px;
+
+    -webkit-transition-property: background-color, color;
+    -webkit-transition-duration: 0.5s;
+    -webkit-transition-timing-function: ease;
+    transition-property: background-color, color;
+    transition-duration: 0.5s;
+    transition-timing-function: ease;
+}
+
+span.index_big_button:hover {
+    background-color: rgba(0, 99, 87, 0.70);
+    color: #FFFFFF;
+}
