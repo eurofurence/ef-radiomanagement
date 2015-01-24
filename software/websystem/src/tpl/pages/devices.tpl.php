@@ -8,6 +8,13 @@ $devices = new devices();
 
 //Check if deviceTemplateEditForm was submitted
 $deviceTemplateFormEditMessage = $devices->proccessDeviceTemplateEdit();
+
+//Check if addDeviceTemplateForm was submitted
+if($devices->newDeviceTemplateFormSubmitted()) {
+    if(!$devices->addNewDeviceTemplate($_POST["newdevicetemplateform_name"], $_POST["newdevicetemplateform_description"])) {
+        $addNewDevicesError = true;
+    }
+}
 ?>
     <script src="<?=domain.dir_js?>devices.js"></script>
     <div class="content_wrapper">
@@ -18,20 +25,35 @@ $deviceTemplateFormEditMessage = $devices->proccessDeviceTemplateEdit();
     </span><br/>
         <br/>
 
-    <span style="display: inline-block; min-width: 300px; max-width: 600px; vertical-align: top;">
+    <span class="content_block">
         <div class="page_subtitle">Device Templates</div>
         <hr class="header_spacer"/>
         <?=$deviceTemplateFormEditMessage?>
-        <?php $devices->printDeviceTemplateList(); ?>
+        <?php
+        $devices->printDeviceTemplateList();
+        if($addNewDevicesError) {
+            ?><div style="display: inline-block;" id="newdevicetemplate"><?php
+        } else {
+            ?><div style="display: none;" id="newdevicetemplate"><?php
+        }
+        ?>
+            <form method="POST" action="<?=domain?>index.php?p=devices">
+                <input type="hidden" name="newdevicetemplateform_submitted" value="true"/>
+                <br/><b>New Devicetemplate</b>&nbsp;-&nbsp;<a href="#" onclick="despawnAddDeviceTemplateForm()">Cancel</a><br/>
+                <input type="text" name="newdevicetemplateform_name" value="" placeholder="Device-Name" style="width: 200px; <?php if($addNewDevicesError) { echo "border: 1px solid #EE0000;"; } ?>"/>
+                <input type="text" name="newdevicetemplateform_description" value="" placeholder="Device-Description" style="width: 300px;"/>
+                <input type="submit" value="Save" style="border: 1px solid #006357;" />
+            </form>
+        </div>
     </span>
     <br/><br/>
-    <span style="display: inline-block; min-width: 300px; max-width: 600px; vertical-align: top;">
+    <span class="content_block">
         <div class="page_subtitle">Registered Devices</div>
         <hr class="header_spacer"/>
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eaque eveniet, facere illo ipsum obcaecati odio veniam. At deserunt esse, non placeat quod repellat reprehenderit soluta suscipit tempora totam, unde voluptates?
     </span>
     <br/><br/>
-    <span style="display: inline-block; min-width: 300px; max-width: 600px; vertical-align: top;">
+    <span class="content_block">
         <div class="page_subtitle">Available Devices</div>
         <hr class="header_spacer"/>
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eaque eveniet, facere illo ipsum obcaecati odio veniam. At deserunt esse, non placeat quod repellat reprehenderit soluta suscipit tempora totam, unde voluptates?

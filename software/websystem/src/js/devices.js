@@ -5,6 +5,26 @@ var lastDeviceTemplateName;
 var lastDeviceTemplateDescription;
 var lastDeviceTemplateNavi;
 
+/* spawnAddDeviceTemplateForm()
+ *
+ * This function spawns a form to add a new device-template
+ */
+function spawnAddDeviceTemplateForm() {
+    document.getElementById("newdevicetemplate").style.display = "inline-block";
+}
+
+/* despawnAddDeviceTemplateForm()
+ *
+ * This function despawns a form to add a new device-template
+ */
+function despawnAddDeviceTemplateForm() {
+    document.getElementById("newdevicetemplate").style.display = "none";
+}
+
+/* resetLastDeviceTemplateEdit()
+ *
+ * Removes input-form from edit and restores old content
+ */
 function resetLastDeviceTemplateEdit() {
     //Check if lastId is present
     if(!lastDeviceTemplateId) { return false; }
@@ -17,10 +37,42 @@ function resetLastDeviceTemplateEdit() {
     return true;
 }
 
+/* editDeviceTemplateSubmit()
+ *
+ * Submits the editDeviceTemplate-Form
+ */
 function editDeviceTemplateSubmit() {
     document.getElementById("devicetpl_edit_form").submit();
 }
 
+/* deleteDeviceTemplate()
+ *
+ * Submits delete request for devicetemplate
+ *
+ * @param devicetemplateid The ID of the desired template
+ */
+function deleteDeviceTemplate(devicetemplateid) {
+    //Check input
+    if(!devicetemplateid) { return false; }
+
+    if(confirm("Do you really want to delete the devicetemplate with the ID: "+devicetemplateid)) {
+        //Set form values
+        document.getElementById("devicetpl_edit_devicetemplateid").value = devicetemplateid;
+        document.getElementById("devicetpl_edit_form_action").value = 2;
+
+        //Submit form
+        document.getElementById("devicetpl_edit_form").submit();
+    } else {
+        return false;
+    }
+}
+
+/* editDeviceTemplate()
+ *
+ * Spawns form-inputs in desired table column
+ *
+ * @param devicetemplateid The ID of the desired template
+ */
 function editDeviceTemplate(devicetemplateid) {
     //Check input
     if(!devicetemplateid) { return false; }

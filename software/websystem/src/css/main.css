@@ -50,6 +50,17 @@ hr.header_spacer {
     margin-right: 10px;
 }
 
+span.content_block {
+    display: inline-block;
+    min-width: 300px;
+    max-width: 600px;
+    vertical-align: top;
+    text-align: left;
+}
+
+form input {
+    border: 1px solid #006357;
+}
 
 /* ##### General purpose table styles */
 table.gptable {
