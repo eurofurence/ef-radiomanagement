@@ -12,6 +12,7 @@ require_once(func_bindings);
     $bindings = new bindings();
     $bindings->generateCallsignList();
     ?>
+    <br/><a href="<?=domain?>">Back</a>
 </div>
 
 <?php require(basetpl_footer); ?>

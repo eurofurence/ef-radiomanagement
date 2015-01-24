@@ -54,7 +54,66 @@ class bindings {
             </tr>
             <?php
         }
-        ?></table><br/><a href="<?=domain?>">Back</a><?php
+        ?></table><?php
+
+        return true;
+    }
+
+    /* printUserBindungs()
+     *
+     * This function prints the users bindings
+     *
+     * @param $userid The users ID
+     */
+    public function printUserBindings($userid) {
+        //Gain db access
+        global $db;
+
+        //Query database for existing bindings
+        $query = $db->query("
+            SELECT bindings.`bindingid` ,bindings.`deviceid`, devicetemplates.`name`, bindings.`bound_since`
+            FROM `bindings` bindings, `devices` devices, `devicetemplates` devicetemplates
+            WHERE
+            bindings.`userid` = '".$db->escape($userid)."' AND
+            bindings.`deviceid` = devices.`deviceid` AND
+            devices.`devicetemplateid` = devicetemplates.`devicetemplateid`
+            ORDER BY `name` ASC;");
+        if($db->isError()) { die($db->isError()); }
+
+        //Check if devices were assigned
+        if(mysqli_num_rows($query)<1) {
+            ?><div>You currently have no assigned devices!</div><?php
+            return true;
+        }
+
+        //Generate output table
+        ?>
+        You will find all radios and accessories assigned to you in the table below.<br/>
+        <br/>
+        <table class="devicelist">
+            <tr>
+                <td class="devicelist_head">Item</td>
+                <td class="devicelist_head">Assigned since</td>
+                <td class="devicelist_head">BID</td>
+                <td class="devicelist_head">DID</td>
+            </tr>
+            <?php
+            //Generate data rows
+            $row_color = "even";
+            while($row = mysqli_fetch_object($query)) {
+                //Adjust row-color
+                if($row_color == "even") { $row_color = "odd"; }
+                else { $row_color = "even"; }
+                ?>
+                <tr class="devicelist_<?=$row_color?>">
+                    <td><?=$row->{"name"}?></td>
+                    <td><?=date("d.m.y H:i:s", strtotime($row->{"bound_since"}))?></td>
+                    <td><?=$row->{"bindingid"}?></td>
+                    <td><?=$row->{"deviceid"}?></td>
+                </tr>
+            <?php
+            }
+            ?></table><i>BID: Binding-ID&nbsp;-&nbsp;DID: Device-ID</i><?php
 
         return true;
     }

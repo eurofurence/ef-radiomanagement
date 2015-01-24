@@ -21,6 +21,12 @@ div.page_title {
     font-weight: bold;
 }
 
+div.page_subtitle {
+    color: #666666;
+    font-size: 25px;
+    font-weight: bold;
+}
+
 div.content_wrapper {
     padding-top: 10px;
 }
@@ -203,5 +209,38 @@ tr.callsignlist_even {
 }
 
 tr.callsignlist_odd:hover, tr.callsignlist_even:hover {
+    background-color: rgba(0, 38, 124, 0.30);
+}
+
+/* ##### Overview styles ##### */
+table.devicelist {
+    margin-left: auto;
+    margin-right: auto;
+    border-collapse: collapse;
+    min-width: 250px;
+    font-size: 11pt;
+    border: 1px solid #006357;
+}
+
+table.devicelist td {
+    padding-left: 5px;
+    padding-right: 5px;
+    border: 1px solid #006357;
+}
+
+td.devicelist_head {
+    font-weight: bold;
+    background-color: rgba(0, 99, 87, 0.60);
+}
+
+tr.devicelist_odd {
+    background-color: rgba(0, 99, 87, 0.20);
+}
+
+tr.devicelist_even {
+    background-color: rgba(0, 99, 87, 0.40);
+}
+
+tr.devicelist_odd:hover, tr.devicelist_even:hover {
     background-color: rgba(0, 38, 124, 0.30);
 }
