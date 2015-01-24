@@ -51,6 +51,40 @@ hr.header_spacer {
 }
 
 
+/* ##### General purpose table styles */
+table.gptable {
+    margin-left: auto;
+    margin-right: auto;
+    border-collapse: collapse;
+    min-width: 250px;
+    font-size: 11pt;
+    border: 1px solid #006357;
+}
+
+table.gptable td {
+    padding-left: 5px;
+    padding-right: 5px;
+    border: 1px solid #006357;
+}
+
+td.gptable_head {
+    font-weight: bold;
+    background-color: rgba(0, 99, 87, 0.60);
+}
+
+tr.gptable_odd {
+    background-color: rgba(0, 99, 87, 0.20);
+}
+
+tr.gptable_even {
+    background-color: rgba(0, 99, 87, 0.40);
+}
+
+tr.gptable_odd:hover, tr.gptable_even:hover {
+    background-color: rgba(0, 38, 124, 0.30);
+}
+
+
 /* ##### Navigation-Styles ##### */
 hr.navi_spacer {
     height: 1px;
@@ -180,67 +214,4 @@ div.callsignlist_wrapper {
     text-align: center;
 }
 
-table.callsignlist {
-    margin-left: auto;
-    margin-right: auto;
-    border-collapse: collapse;
-    min-width: 250px;
-    font-size: 11pt;
-    border: 1px solid #006357;
-}
 
-table.callsignlist td {
-    padding-left: 5px;
-    padding-right: 5px;
-    border: 1px solid #006357;
-}
-
-td.callsignlist_head {
-    font-weight: bold;
-    background-color: rgba(0, 99, 87, 0.60);
-}
-
-tr.callsignlist_odd {
-    background-color: rgba(0, 99, 87, 0.20);
-}
-
-tr.callsignlist_even {
-    background-color: rgba(0, 99, 87, 0.40);
-}
-
-tr.callsignlist_odd:hover, tr.callsignlist_even:hover {
-    background-color: rgba(0, 38, 124, 0.30);
-}
-
-/* ##### Overview styles ##### */
-table.devicelist {
-    margin-left: auto;
-    margin-right: auto;
-    border-collapse: collapse;
-    min-width: 250px;
-    font-size: 11pt;
-    border: 1px solid #006357;
-}
-
-table.devicelist td {
-    padding-left: 5px;
-    padding-right: 5px;
-    border: 1px solid #006357;
-}
-
-td.devicelist_head {
-    font-weight: bold;
-    background-color: rgba(0, 99, 87, 0.60);
-}
-
-tr.devicelist_odd {
-    background-color: rgba(0, 99, 87, 0.20);
-}
-
-tr.devicelist_even {
-    background-color: rgba(0, 99, 87, 0.40);
-}
-
-tr.devicelist_odd:hover, tr.devicelist_even:hover {
-    background-color: rgba(0, 38, 124, 0.30);
-}

@@ -35,10 +35,10 @@ class bindings {
         ?>
         If you find an invalid callsing please contact the radio-team!<br/>
         <br/>
-        <table class="callsignlist">
+        <table class="gptable">
             <tr>
-                <td class="callsignlist_head">Nickname</td>
-                <td class="callsignlist_head">Callsign</td>
+                <td class="gptable_head">Nickname</td>
+                <td class="gptable_head">Callsign</td>
             </tr>
         <?php
         //Generate data rows
@@ -48,7 +48,7 @@ class bindings {
             if($row_color == "even") { $row_color = "odd"; }
             else { $row_color = "even"; }
             ?>
-            <tr class="callsignlist_<?=$row_color?>">
+            <tr class="gptable_<?=$row_color?>">
                 <td><?=$row->{"nickname"}?></td>
                 <td><?=$row->{"callsign"}?></td>
             </tr>
@@ -90,12 +90,12 @@ class bindings {
         ?>
         You will find all radios and accessories assigned to you in the table below.<br/>
         <br/>
-        <table class="devicelist">
+        <table class="gptable">
             <tr>
-                <td class="devicelist_head">Item</td>
-                <td class="devicelist_head">Assigned since</td>
-                <td class="devicelist_head">BID</td>
-                <td class="devicelist_head">DID</td>
+                <td class="gptable_head">Item</td>
+                <td class="gptable_head">Assigned since</td>
+                <td class="gptable_head">BID</td>
+                <td class="gptable_head">DID</td>
             </tr>
             <?php
             //Generate data rows
@@ -105,7 +105,7 @@ class bindings {
                 if($row_color == "even") { $row_color = "odd"; }
                 else { $row_color = "even"; }
                 ?>
-                <tr class="devicelist_<?=$row_color?>">
+                <tr class="gptable_<?=$row_color?>">
                     <td><?=$row->{"name"}?></td>
                     <td><?=date("d.m.y H:i:s", strtotime($row->{"bound_since"}))?></td>
                     <td><?=$row->{"bindingid"}?></td>

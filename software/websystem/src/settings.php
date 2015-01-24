@@ -16,6 +16,7 @@ define(func_database, "func/functions_database.php");
 define(func_template, "func/functions_template.php");
 define(func_sessions, "func/functions_sessions.php");
 define(func_bindings, "func/functions_bindings.php");
+define(func_devices, "func/functions_devices.php");
 
 /* DEFINES for directories */
 define(dir_css, "css/");
@@ -52,5 +53,7 @@ $_TEMPLATES[] = array("alias" => "callsigns", "file" => dir_pagetpl."callsigns.t
 $_TEMPLATES[] = array("alias" => "login", "file" => dir_pagetpl."login.tpl.php", "accessLevel" => 0);
 $_TEMPLATES[] = array("alias" => "logout", "file" => dir_pagetpl."logout.tpl.php", "accessLevel" => 0);
 $_TEMPLATES[] = array("alias" => "overview", "file" => dir_pagetpl."overview.tpl.php", "accessLevel" => 1);
+$_TEMPLATES[] = array("alias" => "devices", "file" => dir_pagetpl."devices.tpl.php", "accessLevel" => 3);
+$_TEMPLATES[] = array("alias" => "users", "file" => dir_pagetpl."users.tpl.php", "accessLevel" => 3);
 
 ?>
