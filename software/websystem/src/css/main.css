@@ -26,14 +26,14 @@ div.content_wrapper {
 }
 
 a:link, a:visited {
-    color: #FFFFFF;
-    font-weight: bold;
+    color: #006357;
+    font-weight: normal;
     text-decoration: none;
 }
 
 a:hover, a:active {
-    color: #FFFFFF;
-    font-weight: bold;
+    color: #006357;
+    font-weight: normal;
     text-decoration: underline;
 }
 
@@ -51,6 +51,18 @@ hr.navi_spacer {
     background-color: #FFFFFF;
     border: none;
     width: 190px;
+}
+
+a.navilink:link, a.navilink:visited {
+    color: #FFFFFF;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+a.navilink:hover, a.navilink:active {
+    color: #FFFFFF;
+    font-weight: bold;
+    text-decoration: underline;
 }
 
 div.navi_wrapper {
@@ -82,16 +94,29 @@ div.index_buttons {
     text-align: center;
 }
 
+@media (max-device-width: 450px) {
+    span.index_big_button {
+        width: 300px;
+        height: 300px;
+        line-height: 300px;
+    }
+}
+
+@media (min-device-width: 450px) {
+    span.index_big_button {
+        width: 400px;
+        height: 400px;
+        line-height: 400px;
+    }
+}
+
 span.index_big_button {
     display: inline-block;
 
-    width: 400px;
-    height: 400px;
     background-color: rgba(0, 99, 87, 0.20);
     margin: 15px 15px 15px 15px;
 
     text-align: center;
-    line-height: 400px;
     vertical-align: middle;
     color: #666666;
     font-size: 30px;
@@ -140,4 +165,43 @@ div.login_content_container {
 div.login_error {
     font-weight: bold;
     color: #EE0000;
+}
+
+/* ##### Callsignlist styles ##### */
+div.callsignlist_wrapper {
+    min-width: 300px;
+    width: 100%;
+    text-align: center;
+}
+
+table.callsignlist {
+    margin-left: auto;
+    margin-right: auto;
+    border-collapse: collapse;
+    min-width: 250px;
+    font-size: 11pt;
+    border: 1px solid #006357;
+}
+
+table.callsignlist td {
+    padding-left: 5px;
+    padding-right: 5px;
+    border: 1px solid #006357;
+}
+
+td.callsignlist_head {
+    font-weight: bold;
+    background-color: rgba(0, 99, 87, 0.60);
+}
+
+tr.callsignlist_odd {
+    background-color: rgba(0, 99, 87, 0.20);
+}
+
+tr.callsignlist_even {
+    background-color: rgba(0, 99, 87, 0.40);
+}
+
+tr.callsignlist_odd:hover, tr.callsignlist_even:hover {
+    background-color: rgba(0, 38, 124, 0.30);
 }
