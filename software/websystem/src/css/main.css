@@ -53,7 +53,7 @@ hr.header_spacer {
 span.content_block {
     display: inline-block;
     min-width: 300px;
-    max-width: 600px;
+    max-width: 900px;
     vertical-align: top;
     text-align: left;
 }
@@ -225,4 +225,33 @@ div.callsignlist_wrapper {
     text-align: center;
 }
 
+/* ##### Devices styles ##### */
+table.devicelist {
+    border-collapse: collapse;
+    min-width: 250px;
+    font-size: 11pt;
+    border: 1px solid #006357;
+}
 
+table.devicelist td {
+    padding-left: 5px;
+    padding-right: 5px;
+    border: 1px solid #006357;
+}
+
+td.devicelist_head {
+    font-weight: bold;
+    background-color: rgba(0, 99, 87, 0.60);
+}
+
+tr.devicelist_odd {
+    background-color: rgba(0, 99, 87, 0.20);
+}
+
+tr.devicelist_even {
+    background-color: rgba(0, 99, 87, 0.40);
+}
+
+tr.devicelist_odd:hover, tr.devicelist_even:hover {
+    background-color: rgba(0, 38, 124, 0.30);
+}

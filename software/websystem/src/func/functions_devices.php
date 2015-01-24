@@ -53,7 +53,7 @@ class devices {
             <?php
             }
             ?></table>
-            <i>DTID: DevicetemplateID</i>&nbsp;&nbsp;-&nbsp;&nbsp;<a href="#" onclick="spawnAddDeviceTemplateForm()">New Devicetemplate!</a>
+            <i>DTID: DevicetemplateID</i>&nbsp;&nbsp;-&nbsp;&nbsp;<a href="#" onclick="spawnAddDeviceTemplateForm()">New Devicetemplate!</a><br/>
         </form>
         <?php
 
@@ -146,6 +146,95 @@ class devices {
         if($db->isError()) { die($db->isError()); }
 
         return true;
+    }
+
+    /* generateRegisteredDevicesList()
+     *
+     * This function generates a list of all registered devices
+     */
+    public function generateRegisteredDevicesList() {
+        //Gain db access
+        global $db;
+
+        //Query all registered devices without callsign
+        $query_no_callsigns = $db->query("
+        SELECT COUNT(*), devices.`devicetemplateid`, devicetemplates.`name`
+            FROM `devices` devices, `devicetemplates` devicetemplates
+            WHERE `callsign` IS NULL AND
+            devices.`devicetemplateid` = devicetemplates.`devicetemplateid`
+            GROUP BY `devicetemplateid`
+            ORDER BY `deviceid` ASC");
+        if($db->isError()) { die($db->isError()); }
+
+        //Query all registered devices with callsign
+        $query_callsigns = $db->query("
+            SELECT devices.*, devicetemplates.`name`
+            FROM `devices` devices, `devicetemplates` devicetemplates
+            WHERE `callsign` IS NOT NULL AND
+            devices.`devicetemplateid` = devicetemplates.`devicetemplateid`
+            ORDER BY `callsign` ASC");
+        if($db->isError()) { die($db->isError()); }
+
+        //Check if devices are present
+        if(mysqli_num_rows($query_callsigns)<1 && mysqli_num_rows($query_no_callsigns)<1) {
+            ?><div>There are currently no devices registered in the database. <a href="#">Register a new device now!</a></div><?php
+            return true;
+        }
+
+        //Generate output table head
+        ?>
+        <table class="devicelist" style="margin-left: 0px;">
+            <tr>
+                <td class="devicelist_head">DID</td>
+                <td class="devicelist_head">Amount</td>
+                <td class="devicelist_head">Name (DTID)</td>
+                <td class="devicelist_head">Callsign</td>
+                <td class="devicelist_head">S/N</td>
+                <td class="devicelist_head">Notes</td>
+            </tr>
+        <?php
+
+        $row_color = "even";
+
+        //Spit out devices without callsign (aka. groupable ones)
+        while($row = mysqli_fetch_object($query_no_callsigns)) {
+            if($row_color == "even") { $row_color = "odd"; }
+            else { $row_color = "even"; }
+            ?>
+            <tr class="devicelist_<?=$row_color?>">
+                <td></td>
+                <td><?=$row->{"COUNT(*)"}?></td>
+                <td><?=$row->{"name"}?>&nbsp;(<?=$row->{"devicetemplateid"}?>)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <?php
+        }
+
+        //Insert seperator <tr>
+        ?><tr style="background-color: #AAAAAA;"><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><?php
+
+        //Spit out devices with callsign
+        while($row = mysqli_fetch_object($query_callsigns)) {
+            if($row_color == "even") { $row_color = "odd"; }
+            else { $row_color = "even"; }
+            ?>
+            <tr class="devicelist_<?=$row_color?>">
+                <td><?=$row->{"deviceid"}?></td>
+                <td></td>
+                <td><?=$row->{"name"}?>&nbsp;(<?=$row->{"devicetemplateid"}?>)</td>
+                <td><?=$row->{"callsign"}?></td>
+                <td><?=$row->{"serialnumber"}?></td>
+                <td><?=$row->{"notes"}?></td>
+            </tr>
+        <?php
+        }
+
+        ?></table><i>DID: DeviceID</i>&nbsp;&nbsp;-&nbsp;&nbsp;<i>DTID: DevicetemplateID</i>&nbsp;&nbsp;-&nbsp;&nbsp;<a href="#" onclick="">New Device!</a><br/><?php
+
+        return true;
+
     }
 
 }

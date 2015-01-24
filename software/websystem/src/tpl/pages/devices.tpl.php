@@ -50,7 +50,7 @@ if($devices->newDeviceTemplateFormSubmitted()) {
     <span class="content_block">
         <div class="page_subtitle">Registered Devices</div>
         <hr class="header_spacer"/>
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eaque eveniet, facere illo ipsum obcaecati odio veniam. At deserunt esse, non placeat quod repellat reprehenderit soluta suscipit tempora totam, unde voluptates?
+        <?php $devices->generateRegisteredDevicesList(); ?>
     </span>
     <br/><br/>
     <span class="content_block">
