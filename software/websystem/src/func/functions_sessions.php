@@ -71,6 +71,10 @@ class sessions {
             }
         }
 
+        //Set lastseen in acc_db
+        $query = $db->query("UPDATE `users` SET `lastseen`='".date("Y-m-d H:i:s", time())."' WHERE `userid`='".$result->{"userid"}."' LIMIT 1");
+        if($db->isError()) { die($db->isError()); }
+
         //Set session vars
         $_SESSION["ul"] = $result->{"userlevel"};
         $_SESSION["un"] = $result->{"nickname"};

@@ -2,6 +2,7 @@
 
     <div class="title"><a href="<?=domain?>"><img src="<?=domain.dir_img?>title.jpg"/></a></div>
 <br/>
+<div style="width: 100%; text-align: center;">If you need any help with your radio and/or this system call <?=$core->getSetting("helpcallsign")?>!</div>
 <div class="index_buttons">
     <span class="index_big_button">
         <a class="index_big_button" href="<?=domain?>index.php?p=callsigns">
