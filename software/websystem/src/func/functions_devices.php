@@ -38,7 +38,7 @@ class devices {
         global $db;
 
         //Query available templates
-        $query = $db->query("SELECT * FROM `devicetemplates` ORDER BY `devicetemplateid` ASC LIMIT 200");
+        $query = $db->query("SELECT * FROM `devicetemplates` ORDER BY `name` ASC LIMIT 200");
         if($db->isError()) { die($db->isError()); }
 
         //Check if there are templates in dataset
@@ -48,7 +48,7 @@ class devices {
 
         //Generate table from query
         ?>
-        <b>//FIXME: Delete also devices with tplid and delete bindings!</b>
+        <div style="margin-bottom: 2px;">Below you find a table containing all device-templates.</div>
         <form style="display: inline;" method="POST" action="<?=domain?>index.php?p=devices" id="devicetpl_edit_form">
             <input type="hidden" name="devicetpl_edit_form_submitted" value="true"/>
             <input type="hidden" name="devicetpl_edit_form_action" id="devicetpl_edit_form_action" value="0"/>
@@ -124,6 +124,13 @@ class devices {
         } elseif($_POST["devicetpl_edit_form_action"] == 2) {
             //Proccess delete
             if(!$_POST["devicetpl_edit_devicetemplateid"]) { return "<b style=\"color: #EE0000;\">Error: DTID not passed!</b>"; }
+
+            //Get all devices that use the template from db and delete them
+            $query_devices_with_template = $db->query("SELECT `deviceid` FROM `devices` WHERE `devicetemplateid`='".$db->escape($_POST["devicetpl_edit_devicetemplateid"])."'");
+            if($db->isError()) { die($db->isError()); }
+            while($row = mysqli_fetch_object($query_devices_with_template)) {
+                self::deleteDevice($row->{"deviceid"});
+            }
 
             //Delete template from db
             $db->query("DELETE FROM `devicetemplates` WHERE `devicetemplateid`='".$db->escape($_POST["devicetpl_edit_devicetemplateid"])."' LIMIT 1");

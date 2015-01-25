@@ -55,7 +55,7 @@ function deleteDeviceTemplate(devicetemplateid) {
     //Check input
     if(!devicetemplateid) { return false; }
 
-    if(confirm("Do you really want to delete the devicetemplate with the ID: "+devicetemplateid)) {
+    if(confirm("Do you really want to delete the devicetemplate with the ID "+devicetemplateid+" and ALL ASSOCIATED BINDINGS AND DEVICES?!?")) {
         //Set form values
         document.getElementById("devicetpl_edit_devicetemplateid").value = devicetemplateid;
         document.getElementById("devicetpl_edit_form_action").value = 2;
