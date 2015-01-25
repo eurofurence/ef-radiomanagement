@@ -148,3 +148,21 @@ function spawnNewDeviceMultiForm() {
     return true;
 }
 
+/* deleteDevice()
+ *
+ * This function submits the deleteDevice-Form
+ *
+ * @param deviceid The desired device to delete
+ */
+function deleteDevice(deviceid) {
+    //Ask user is he is sure
+    if(!confirm("Do you really want to delete the device with the ID "+deviceid+" and ALL bindings associated with it?")) { return false; }
+
+    //Set deviceid-field in form
+    document.getElementById("deleteDeviceForm_deviceid").value = deviceid;
+
+    //Submit Form
+    document.getElementById("deleteDeviceForm").submit();
+
+    return true;
+}

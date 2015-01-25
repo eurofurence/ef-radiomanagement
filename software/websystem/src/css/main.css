@@ -118,8 +118,9 @@ a.navilink:hover, a.navilink:active {
 
 div.navi_wrapper {
     float: left;
-    height: 100%;
     width: 200px;
+    height: 100%;
+    min-height: 100%;
     background-color: #006357;
     margin-right: 10px;
     color: #FFFFFF;
@@ -226,9 +227,16 @@ div.callsignlist_wrapper {
 }
 
 /* ##### Devices styles ##### */
+div.devicelist_wrapper {
+    max-height: 450px;
+    width: 700px;
+    overflow: auto;
+    resize: both;
+}
+
 table.devicelist {
     border-collapse: collapse;
-    min-width: 250px;
+    width: 100%;
     font-size: 11pt;
     border: 1px solid #006357;
 }

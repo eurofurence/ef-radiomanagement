@@ -40,6 +40,11 @@ if($devices->newDeviceMultiFormSubmitted()) {
         $_POST["newDeviceMultiForm_amount"] = false;
     }
 }
+
+//Check if deleteDeviceForm was submitted
+if($devices->deleteDeviceFormSubmitted()) {
+    if(!$devices->deleteDevice($_POST["deleteDeviceForm_deviceid"])) { $deleteDeviceError = true; }
+}
 ?>
     <script src="<?=domain.dir_js?>devices.js"></script>
     <div class="content_wrapper">
@@ -72,7 +77,9 @@ if($devices->newDeviceMultiFormSubmitted()) {
         <div class="page_subtitle">Registered Devices</div>
         <hr class="header_spacer"/>
         <div>Below you will find a list of all registered devices, sorted by name, callsign and then deviceid.</div>
+        <?php if($deleteDeviceError) { ?><b style="color: #EE0000;">Error deleting device!</b><?php } ?>
         <?php $devices->generateRegisteredDevicesList($_POST["serachRegisteredDevices_field"], $_POST["serachRegisteredDevices_value"], $_POST["serachRegisteredDevices_availability"]); ?>
+        <script language="text/Javascript">document.getElementById("devicelist_wrapper").style.maxHeight = "1000px";</script>
         <div style="display: none;" id="newDeviceSingleForm_wrapper">
             <br/>
             <form method="POST" action="<?=domain?>index.php?p=devices" id="newDeviceSingleForm">
@@ -109,9 +116,6 @@ if($devices->newDeviceMultiFormSubmitted()) {
                     </tr>
                 </table>
             </form>
-
-
-
         </div>
         <div style="display: none;" id="newDeviceMultiForm_wrapper">
             <br/>
@@ -137,6 +141,12 @@ if($devices->newDeviceMultiFormSubmitted()) {
                         </td>
                     </tr>
                 </table>
+            </form>
+        </div>
+        <div style="display: none;">
+            <form method="POST" action="<?=domain?>index.php?p=devices" id="deleteDeviceForm">
+                <input type="hidden" name="deleteDeviceForm_submitted" value="true"/>
+                <input type="hidden" name="deleteDeviceForm_deviceid" id="deleteDeviceForm_deviceid" value=""/>
             </form>
         </div>
     </span>

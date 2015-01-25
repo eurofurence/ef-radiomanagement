@@ -72,7 +72,7 @@ class devices {
                     <td><?=$row->{"devicetemplateid"}?></td>
                     <td id="devicetpl_name_<?=$row->{"devicetemplateid"}?>"><?=$row->{"name"}?></td>
                     <td id="devicetpl_description_<?=$row->{"devicetemplateid"}?>"><?=$row->{"description"}?></td>
-                    <td id="devicetpl_navi_<?=$row->{"devicetemplateid"}?>"><a href="#" onclick="editDeviceTemplate(<?=$row->{"devicetemplateid"}?>)" title="Edit"><img src="<?=domain.dir_img?>edit.png"/></a>&nbsp;<a href="#" onclick="deleteDeviceTemplate(<?=$row->{"devicetemplateid"}?>)" title="Delete"><img src="<?=domain.dir_img?>cross.png"/></a></td>
+                    <td id="devicetpl_navi_<?=$row->{"devicetemplateid"}?>"><a href="#" onclick="editDeviceTemplate(<?=$row->{"devicetemplateid"}?>)" title="Edit"><img src="<?=domain.dir_img?>edit.png"/></a>&nbsp;<a href="#" onclick="deleteDeviceTemplate(<?=$row->{"devicetemplateid"}?>)" title="Delete"><img src="<?=domain.dir_img?>trashbin.png"/></a></td>
                 </tr>
             <?php
             }
@@ -278,7 +278,8 @@ class devices {
 
         //Generate output table head
         ?>
-        <table class="devicelist" style="margin-left: 0px;">
+        <div class="devicelist_wrapper" id="devicelist_wrapper">
+        <table class="devicelist" id="devicelist_table" style="margin-left: 0px;">
             <tr>
                 <td class="devicelist_head">DID</td>
                 <td class="devicelist_head">Av</td>
@@ -286,6 +287,7 @@ class devices {
                 <td class="devicelist_head">Callsign</td>
                 <td class="devicelist_head">S/N</td>
                 <td class="devicelist_head">Notes</td>
+                <td class="devicelist_head">&nbsp;</td>
             </tr>
         <?php
 
@@ -302,11 +304,12 @@ class devices {
                 <td><?=$device->{"callsign"}?></td>
                 <td><?=$device->{"serialnumber"}?></td>
                 <td><?=$device->{"notes"}?></td>
+                <td><a href="#" onclick="deleteDevice('<?=$device->{"deviceid"}?>')" title="Delete device!"><img src="<?=domain.dir_img?>trashbin.png"/></a></td>
             </tr>
         <?php
         }
 
-        ?></table><i>Av: Available</i>&nbsp;&nbsp;-&nbsp;&nbsp;<i>DID: DeviceID</i>&nbsp;&nbsp;-&nbsp;&nbsp;<i>DTID: DevicetemplateID</i><br/>
+        ?></table></div><i>Av: Available</i>&nbsp;&nbsp;-&nbsp;&nbsp;<i>DID: DeviceID</i>&nbsp;&nbsp;-&nbsp;&nbsp;<i>DTID: DevicetemplateID</i><br/>
         <a href="#" onclick="spawnNewDeviceSingleForm()">New Device (Single)</a>&nbsp;&nbsp;-&nbsp;&nbsp;<a href="#" onclick="spawnNewDeviceMultiForm()">New Devices (Multi)</a><br/><?php
 
         return true;
@@ -395,6 +398,46 @@ class devices {
         for($curDevice=0; $curDevice<$amount; $curDevice++) { $sqlValues.="(".$db->escape($devicetemplateid)."),"; }
         $sqlValues = rtrim($sqlValues, ",");
         $db->query("INSERT INTO `devices` (`devicetemplateid`) VALUES ".$sqlValues);
+        if($db->isError()) { die($db->isError()); }
+
+        return true;
+    }
+
+    /* deleteDeviceFormSubmitted()
+     *
+     * Checks if the deleteDevice-Form was submitted
+     *
+     * @return TRUE Form was submitted
+     * @return FALSE Form was NOT submitted
+     */
+    public function deleteDeviceFormSubmitted() {
+        if($_POST["deleteDeviceForm_submitted"]) { return true; }
+        return false;
+    }
+
+    /* deleteDevice()
+     *
+     * This function deletes a device from `devices` and all corresponding
+     * bindings from `bindings`
+     *
+     * @param $deviceid The ID of the device that will be deleted
+     *
+     * @return TRUE Device deleted
+     * @return FALSE Error
+     */
+    public function deleteDevice($deviceid) {
+        //Check input
+        if($deviceid<1) { return false; }
+
+        //Gain db access
+        global $db;
+
+        //Remove bindings
+        $db->query("DELETE FROM `bindings` WHERE `deviceid`='".$db->escape($deviceid)."'");
+        if($db->isError()) { die($db->isError()); }
+
+        //Remove device
+        $db->query("DELETE FROM `devices` WHERE `deviceid`='".$db->escape($deviceid)."'");
         if($db->isError()) { die($db->isError()); }
 
         return true;
