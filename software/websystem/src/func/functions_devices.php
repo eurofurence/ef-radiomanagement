@@ -6,6 +6,29 @@
 
 class devices {
 
+    /* getDeviceTemplates()
+     *
+     * This function returns name and ID of the available designtemplates
+     *
+     * @return ARRAY The available designtemplates as objects in an array
+     */
+    public function getDeviceTemplates() {
+        //Gain db access
+        global $db;
+
+        //Query designtemplates from db
+        $query = $db->query("SELECT `devicetemplateid`, `name` FROM `devicetemplates` ORDER BY `name` ASC LIMIT 200");
+        if($db->isError()) { die($db->isError()); }
+
+        //Create return-array
+        $devicetemplates = array();
+        while($row = mysqli_fetch_object($query)) {
+            $devicetemplates[] = $row;
+        }
+
+        return $devicetemplates;
+    }
+
     /* printDeviceTemplateList()
      *
      * This function prints a list of all available device-templates (editable)
@@ -15,7 +38,7 @@ class devices {
         global $db;
 
         //Query available templates
-        $query = $db->query("SELECT * FROM `devicetemplates` ORDER BY `devicetemplateid` ASC LIMIT 100");
+        $query = $db->query("SELECT * FROM `devicetemplates` ORDER BY `devicetemplateid` ASC LIMIT 200");
         if($db->isError()) { die($db->isError()); }
 
         //Check if there are templates in dataset
@@ -54,7 +77,7 @@ class devices {
             <?php
             }
             ?></table>
-            <i>DTID: DevicetemplateID</i>&nbsp;&nbsp;-&nbsp;&nbsp;<a href="#" onclick="spawnAddDeviceTemplateForm()">New Devicetemplate!</a><br/>
+            <i>DTID: DevicetemplateID</i>&nbsp;&nbsp;-&nbsp;&nbsp;<a href="#" onclick="spawnAddDeviceTemplateForm()">New Devicetemplate</a><br/>
         </form>
         <?php
 
@@ -177,7 +200,7 @@ class devices {
             SELECT  devices.*, devicetemplates.`name`
             FROM `devices` devices, `devicetemplates` devicetemplates
             WHERE devices.`devicetemplateid` = devicetemplates.`devicetemplateid` AND ".$sqlSearch."
-            ORDER BY `name`, `callsign`, `deviceid` ASC");
+            ORDER BY `name` ASC, `callsign` ASC, `deviceid` ASC");
         if($db->isError()) { die($db->isError()); }
 
         //Querry database for bindings
@@ -249,7 +272,7 @@ class devices {
 
         //Check if devices are present
         if(sizeof($outputDevices)<1) {
-            ?><div>There are currently no matching devices registered in the database. <a href="#">Register a new device now!</a></div><?php
+            ?><div>There are currently no matching devices registered in the database. <a href="#" onclick="spawnNewDeviceSingleForm()">New Device (Single)</a>&nbsp;&nbsp;-&nbsp;&nbsp;<a href="#" onclick="spawnNewDeviceMultiForm()">New Devices (Multi)</a></div><?php
             return true;
         }
 
@@ -283,10 +306,98 @@ class devices {
         <?php
         }
 
-        ?></table><i>Av: Available</i>&nbsp;&nbsp;-&nbsp;&nbsp;<i>DID: DeviceID</i>&nbsp;&nbsp;-&nbsp;&nbsp;<i>DTID: DevicetemplateID</i>&nbsp;&nbsp;-&nbsp;&nbsp;<a href="#" onclick="">New Device!</a><br/><?php
+        ?></table><i>Av: Available</i>&nbsp;&nbsp;-&nbsp;&nbsp;<i>DID: DeviceID</i>&nbsp;&nbsp;-&nbsp;&nbsp;<i>DTID: DevicetemplateID</i><br/>
+        <a href="#" onclick="spawnNewDeviceSingleForm()">New Device (Single)</a>&nbsp;&nbsp;-&nbsp;&nbsp;<a href="#" onclick="spawnNewDeviceMultiForm()">New Devices (Multi)</a><br/><?php
 
         return true;
+    }
 
+    /* newDeviceSingleFormSubmitted()
+     *
+     * Checks if newDeviceSingleForm was submitted
+     *
+     * @return TRUE Form was submitted
+     * @return FALSE Form was NOT submitted
+     */
+    public function newDeviceSingleFormSubmitted() {
+        if($_POST["newDeviceSingleForm_submitted"]) { return true; }
+        return false;
+    }
+
+    /* newDeviceMultiFormSubmitted()
+     *
+     * Checks if newDeviceMultiFormSubmitted was submitted
+     *
+     * @return TRUE Form was submitted
+     * @return FALSE Form was NOT submitted
+     */
+    public function newDeviceMultiFormSubmitted() {
+        if($_POST["newDeviceMultiForm_submitted"]) { return true; }
+        return false;
+    }
+
+
+    /* createSingleDevice()
+     *
+     * This function creates one single device
+     *
+     * @param $devicetemplateid The desired template
+     * @param $callsign (Opt) The callsign
+     * @param $serialnumber (Opt) The serialnumber
+     * @param $notes (Opt) Notes
+     *
+     * @return TRUE Device created
+     * @return FALSE Error
+     */
+    public function createSingleDevice($devicetemplateid, $callsign, $serialnumber, $notes) {
+        //Check input
+        if(!$devicetemplateid) { return false; }
+
+        //Gain db access
+        global $db;
+
+        //Check if devicetemplate exist
+        $query = $db->query("SELECT `devicetemplateid` FROM `devicetemplates` WHERE `devicetemplateid`='".$db->escape($devicetemplateid)."' LIMIT 1");
+        if($db->isError()) { die($db->isError()); }
+        if(mysqli_num_rows($query)<1) { return false; }
+
+        //Insert new device into database
+        $db->query("INSERT INTO `devices` (`devicetemplateid`, `callsign`, `serialnumber`, `notes`) VALUES ('".$db->escape($devicetemplateid)."', '".$db->escape($callsign)."', '".$db->escape($serialnumber)."', '".$db->escape($notes)."')");
+        if($db->isError()) { die($db->isError()); }
+
+        return true;
+    }
+
+    /* createMultiDevices()
+     *
+     * This function creates a batch of devices
+     *
+     * @param $devicetemplateid The ID of the desired devicetemplate
+     * @param $amount Amount of devices to create
+     *
+     * @return TRUE Devices created
+     * @return FALSE Error
+     */
+    public function createMultiDevices($devicetemplateid, $amount) {
+        //Check input
+        if(!$devicetemplateid || !$amount || $amount < 1 || $amount > 100) { return false; }
+
+        //Gain db access
+        global $db;
+
+        //Check if devicetemplate exist
+        $query = $db->query("SELECT `devicetemplateid` FROM `devicetemplates` WHERE `devicetemplateid`='".$db->escape($devicetemplateid)."' LIMIT 1");
+        if($db->isError()) { die($db->isError()); }
+        if(mysqli_num_rows($query)<1) { return false; }
+
+        //Insert some devices ;)
+        $sqlValues = "";
+        for($curDevice=0; $curDevice<$amount; $curDevice++) { $sqlValues.="(".$db->escape($devicetemplateid)."),"; }
+        $sqlValues = rtrim($sqlValues, ",");
+        $db->query("INSERT INTO `devices` (`devicetemplateid`) VALUES ".$sqlValues);
+        if($db->isError()) { die($db->isError()); }
+
+        return true;
     }
 
 }

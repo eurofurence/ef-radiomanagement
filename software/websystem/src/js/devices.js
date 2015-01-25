@@ -111,3 +111,40 @@ function editDeviceTemplate(devicetemplateid) {
 
     return true;
 }
+
+function despawnNewDeviceSingleForm() {
+    //Set display to none
+    document.getElementById("newDeviceSingleForm_wrapper").style.display = "none";
+
+    return true;
+}
+
+function despawnNewDeviceMultiForm() {
+    //Set display to none
+    document.getElementById("newDeviceMultiForm_wrapper").style.display = "none";
+
+    return true;
+}
+
+function spawnNewDeviceSingleForm() {
+    //Despawn other form if still visible
+    despawnNewDeviceMultiForm();
+
+    //Display wrapper
+    document.getElementById("newDeviceSingleForm_wrapper").style.display = "inline-block";
+
+    return true;
+}
+
+
+
+function spawnNewDeviceMultiForm() {
+    //Despawn other form if still visible
+    despawnNewDeviceSingleForm();
+
+    //Display wrapper
+    document.getElementById("newDeviceMultiForm_wrapper").style.display = "inline-block";
+
+    return true;
+}
+
