@@ -192,7 +192,7 @@ class devices {
         if(!$search_field) { $optionSelected = "callsign"; }
         else { $optionSelected = $search_field; }
         ?>
-        <form method="POST" id="deviceSearchForm" action="<?=domain?>index.php?p=devices" style="margin-bottom: 2px;">
+        <form method="POST" id="deviceSearchForm" action="<?=domain?>index.php?p=devices" style="margin-bottom: 2px; magin-top: 5px;">
             <input type="hidden" name="serachRegisteredDevices_reset" id=serachRegisteredDevices_reset" value=""/>
             <table>
                 <tr>

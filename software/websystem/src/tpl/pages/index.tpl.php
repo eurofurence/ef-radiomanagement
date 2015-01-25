@@ -1,3 +1,4 @@
+<?php if($sessions->getUserLevel()>0) { header("Location: ".domain."index.php?p=overview"); } ?>
 <?php require(basetpl_header); ?>
 
     <div class="title"><a href="<?=domain?>"><img src="<?=domain.dir_img?>title.jpg"/></a></div>

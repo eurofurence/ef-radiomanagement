@@ -1,5 +1,5 @@
 <div class="navi_wrapper">
-    <img src="<?=domain.dir_img?>logo.png" />
+    <a href="<?=domain?>index.php?p=overview"><img src="<?=domain.dir_img?>logo.png" /></a>
     <hr class="navi_spacer"/>
     <div class="navi_logininfo">
         <div style="width:100%; text-align:center;"><b>Login Information</b></div>

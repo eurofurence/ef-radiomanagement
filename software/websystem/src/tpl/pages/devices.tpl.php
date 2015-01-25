@@ -50,7 +50,7 @@ if($devices->newDeviceTemplateFormSubmitted()) {
     <span class="content_block">
         <div class="page_subtitle">Registered Devices</div>
         <hr class="header_spacer"/>
-        <div>Below you will find a list of all registered devices, sorted by name, callsign and then deviceid.</div><br/>
+        <div>Below you will find a list of all registered devices, sorted by name, callsign and then deviceid.</div>
         <?php $devices->generateRegisteredDevicesList($_POST["serachRegisteredDevices_field"], $_POST["serachRegisteredDevices_value"], $_POST["serachRegisteredDevices_availability"]); ?>
     </span>
     <br/>
