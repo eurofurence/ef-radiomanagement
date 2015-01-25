@@ -49,7 +49,7 @@ class devices {
                     <td><?=$row->{"devicetemplateid"}?></td>
                     <td id="devicetpl_name_<?=$row->{"devicetemplateid"}?>"><?=$row->{"name"}?></td>
                     <td id="devicetpl_description_<?=$row->{"devicetemplateid"}?>"><?=$row->{"description"}?></td>
-                    <td id="devicetpl_navi_<?=$row->{"devicetemplateid"}?>"><a href="#" onclick="editDeviceTemplate(<?=$row->{"devicetemplateid"}?>)" title="Edit"><img src="<?=domain.dir_img?>edit.png"/></a>&nbsp;<a href="#" onclick="deleteDeviceTemplate(<?=$row->{"devicetemplateid"}?>)" title="Delete"><img src="<?=domain.dir_img?>delete.png"/></a></td>
+                    <td id="devicetpl_navi_<?=$row->{"devicetemplateid"}?>"><a href="#" onclick="editDeviceTemplate(<?=$row->{"devicetemplateid"}?>)" title="Edit"><img src="<?=domain.dir_img?>edit.png"/></a>&nbsp;<a href="#" onclick="deleteDeviceTemplate(<?=$row->{"devicetemplateid"}?>)" title="Delete"><img src="<?=domain.dir_img?>cross.png"/></a></td>
                 </tr>
             <?php
             }
@@ -155,8 +155,9 @@ class devices {
      *
      * @param $search_field The field to perform a specific search in (If == false => no search is performed)
      * @param $search_value The value to search for
+     * @param $availability (0=List all devices, 1=List only available devices, 2=List only bound devices)
      */
-    public function generateRegisteredDevicesList($search_field, $search_value) {
+    public function generateRegisteredDevicesList($search_field, $search_value, $availability) {
         //Gain db access
         global $db;
 
@@ -172,12 +173,20 @@ class devices {
         }
 
         //Query all registered devices
-        $query = $db->query("
+        $query_devices = $db->query("
             SELECT  devices.*, devicetemplates.`name`
             FROM `devices` devices, `devicetemplates` devicetemplates
             WHERE devices.`devicetemplateid` = devicetemplates.`devicetemplateid` AND ".$sqlSearch."
             ORDER BY `name`, `callsign`, `deviceid` ASC");
         if($db->isError()) { die($db->isError()); }
+
+        //Querry database for bindings
+        $query_bindings = $db->query("SELECT `deviceid` FROM `bindings`");
+        if($db->isError()) { die($db->isError()); }
+
+        //Generate array of bound devices
+        $boundDevices = array();
+        while($row = mysqli_fetch_object($query_bindings)) { $boundDevices[] = $row->{"deviceid"}; }
 
         //Output search-form
         if(!$search_field) { $optionSelected = "callsign"; }
@@ -185,22 +194,62 @@ class devices {
         ?>
         <form method="POST" id="deviceSearchForm" action="<?=domain?>index.php?p=devices" style="margin-bottom: 2px;">
             <input type="hidden" name="serachRegisteredDevices_reset" id=serachRegisteredDevices_reset" value=""/>
-            Search:&nbsp;
-            <select name="serachRegisteredDevices_field" required>
-                <option value="deviceid" <?php if($optionSelected=="deviceid") echo "selected"; ?>>DeviceID</option>
-                <option value="name" <?php if($optionSelected=="name") echo "selected"; ?>>Name</option>
-                <option value="callsign" <?php if($optionSelected=="callsign") echo "selected"; ?>>Callsign</option>
-                <option value="serialnumber" <?php if($optionSelected=="serialnumber") echo "selected"; ?>>Serialnumber</option>
-                <option value="notes" <?php if($optionSelected=="notes") echo "selected"; ?>>Notes</option>
-            </select>
-            <input type="text" name="serachRegisteredDevices_value" value="<?=$search_value?>" placeholder="String to search for" style="width: 200px;"/>
-            <input type="submit" value="Search"/>
+            <table>
+                <tr>
+                    <td style="text-align: right; font-size: 12px;">Search:</td>
+                    <td style="text-align: left;">
+                        <select name="serachRegisteredDevices_field" required>
+                            <option value="deviceid" <?php if($optionSelected=="deviceid") echo "selected"; ?>>DeviceID</option>
+                            <option value="name" <?php if($optionSelected=="name") echo "selected"; ?>>Name</option>
+                            <option value="callsign" <?php if($optionSelected=="callsign") echo "selected"; ?>>Callsign</option>
+                            <option value="serialnumber" <?php if($optionSelected=="serialnumber") echo "selected"; ?>>Serialnumber</option>
+                            <option value="notes" <?php if($optionSelected=="notes") echo "selected"; ?>>Notes</option>
+                        </select>
+                        <input type="text" name="serachRegisteredDevices_value" value="<?=$search_value?>" placeholder="String to search for" style="width: 200px;"/>
+                        <input type="submit" value="Submit"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: right; font-size: 12px;">Show:</td>
+                    <td style="text-align: left;">
+                        <select name="serachRegisteredDevices_availability">
+                            <option value="0" <?php if($availability=="0") echo "selected"; ?>>All registered devices</option>
+                            <option value="1" <?php if($availability=="1") echo "selected"; ?>>Only available devices</option>
+                            <option value="2" <?php if($availability=="2") echo "selected"; ?>>Only bound devices</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
         </form>
         <?php
 
+        //Generate output data array
+        $outputDevices = array();
+        switch($availability) {
+            //Only available devices
+            case 1:
+                while($row = mysqli_fetch_object($query_devices)) {
+                    if(!in_array($row->{"deviceid"}, $boundDevices)) {
+                        $outputDevices[] = $row;
+                    }
+                }
+                break;
+            //Only bound devices
+            case 2:
+                while($row = mysqli_fetch_object($query_devices)) {
+                    if(in_array($row->{"deviceid"}, $boundDevices)) {
+                        $outputDevices[] = $row;
+                    }
+                }
+                break;
+            //All devices
+            case 0:
+            default: while($row = mysqli_fetch_object($query_devices)) { $outputDevices[] = $row; } break;
+        }
+
         //Check if devices are present
-        if(mysqli_num_rows($query)<1) {
-            ?><div>There are currently no devices registered in the database. <a href="#">Register a new device now!</a></div><?php
+        if(sizeof($outputDevices)<1) {
+            ?><div>There are currently no matching devices registered in the database. <a href="#">Register a new device now!</a></div><?php
             return true;
         }
 
@@ -209,6 +258,7 @@ class devices {
         <table class="devicelist" style="margin-left: 0px;">
             <tr>
                 <td class="devicelist_head">DID</td>
+                <td class="devicelist_head">Av</td>
                 <td class="devicelist_head">Name (DTID)</td>
                 <td class="devicelist_head">Callsign</td>
                 <td class="devicelist_head">S/N</td>
@@ -218,21 +268,22 @@ class devices {
 
         //Spit out devices
         $row_color = "even";
-        while($row = mysqli_fetch_object($query)) {
+        foreach($outputDevices as $device) {
             if($row_color == "even") { $row_color = "odd"; }
             else { $row_color = "even"; }
             ?>
             <tr class="devicelist_<?=$row_color?>">
-                <td><?=$row->{"deviceid"}?></td>
-                <td><?=$row->{"name"}?>&nbsp;(<?=$row->{"devicetemplateid"}?>)</td>
-                <td><?=$row->{"callsign"}?></td>
-                <td><?=$row->{"serialnumber"}?></td>
-                <td><?=$row->{"notes"}?></td>
+                <td><?=$device->{"deviceid"}?></td>
+                <td style="text-align: center;"><?php if(in_array($device->{"deviceid"}, $boundDevices)) { echo "<img src=\"".domain.dir_img."cross.png\"/>"; } else { echo "<img src=\"".domain.dir_img."check.png\"/>"; } ?></td>
+                <td><?=$device->{"name"}?>&nbsp;(<?=$device->{"devicetemplateid"}?>)</td>
+                <td><?=$device->{"callsign"}?></td>
+                <td><?=$device->{"serialnumber"}?></td>
+                <td><?=$device->{"notes"}?></td>
             </tr>
         <?php
         }
 
-        ?></table><i>DID: DeviceID</i>&nbsp;&nbsp;-&nbsp;&nbsp;<i>DTID: DevicetemplateID</i>&nbsp;&nbsp;-&nbsp;&nbsp;<a href="#" onclick="">New Device!</a><br/><?php
+        ?></table><i>Av: Available</i>&nbsp;&nbsp;-&nbsp;&nbsp;<i>DID: DeviceID</i>&nbsp;&nbsp;-&nbsp;&nbsp;<i>DTID: DevicetemplateID</i>&nbsp;&nbsp;-&nbsp;&nbsp;<a href="#" onclick="">New Device!</a><br/><?php
 
         return true;
 

@@ -51,14 +51,8 @@ if($devices->newDeviceTemplateFormSubmitted()) {
         <div class="page_subtitle">Registered Devices</div>
         <hr class="header_spacer"/>
         <div>Below you will find a list of all registered devices, sorted by name, callsign and then deviceid.</div><br/>
-        <?php $devices->generateRegisteredDevicesList($_POST["serachRegisteredDevices_field"], $_POST["serachRegisteredDevices_value"], $_POST["serachRegisteredDevices_reset"]); ?>
+        <?php $devices->generateRegisteredDevicesList($_POST["serachRegisteredDevices_field"], $_POST["serachRegisteredDevices_value"], $_POST["serachRegisteredDevices_availability"]); ?>
     </span>
-    <br/><br/>
-    <span class="content_block">
-        <div class="page_subtitle">Available Devices</div>
-        <hr class="header_spacer"/>
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eaque eveniet, facere illo ipsum obcaecati odio veniam. At deserunt esse, non placeat quod repellat reprehenderit soluta suscipit tempora totam, unde voluptates?
-    </span>
-    </div>
+    <br/>
 
 <?php require_once(basetpl_footer); ?>
