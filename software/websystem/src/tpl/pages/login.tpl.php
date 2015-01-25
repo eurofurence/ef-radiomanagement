@@ -31,11 +31,11 @@
                     <table>
                         <tr>
                             <td style="text-align: right; font-size: 10pt;">Nickname</td>
-                            <td><input type="text" name="loginform_nickname" placeholder="Randomfur" value="<?=$_POST["loginform_nickname"]?>" style="width: 200px;"/></td>
+                            <td><input type="text" name="loginform_nickname" placeholder="Randomfur" value="<?=$_POST["loginform_nickname"]?>" style="width: 200px;" required/></td>
                         </tr>
                         <tr>
                             <td style="text-align: right; font-size: 10pt;">Reg-ID</td>
-                            <td><input type="text" name="loginform_regid" placeholder="1234" value="<?=$_POST["loginform_regid"]?>" style="width: 50px;"/></td>
+                            <td><input type="text" name="loginform_regid" placeholder="1234" value="<?=$_POST["loginform_regid"]?>" style="width: 50px;" required/></td>
                         </tr>
                         <tr>
                             <td style="text-align: right; font-size: 10pt;">Password (Opt.)</td>

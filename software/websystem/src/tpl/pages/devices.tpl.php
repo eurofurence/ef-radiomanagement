@@ -40,7 +40,7 @@ if($devices->newDeviceTemplateFormSubmitted()) {
             <form method="POST" action="<?=domain?>index.php?p=devices">
                 <input type="hidden" name="newdevicetemplateform_submitted" value="true"/>
                 <br/><b>New Devicetemplate</b>&nbsp;-&nbsp;<a href="#" onclick="despawnAddDeviceTemplateForm()">Cancel</a><br/>
-                <input type="text" name="newdevicetemplateform_name" value="" placeholder="Device-Name" style="width: 200px; <?php if($addNewDevicesError) { echo "border: 1px solid #EE0000;"; } ?>"/>
+                <input type="text" name="newdevicetemplateform_name" value="" placeholder="Device-Name" style="width: 200px; <?php if($addNewDevicesError) { echo "border: 1px solid #EE0000;"; } ?>" required/>
                 <input type="text" name="newdevicetemplateform_description" value="" placeholder="Device-Description" style="width: 300px;"/>
                 <input type="submit" value="Save" style="border: 1px solid #006357;" />
             </form>
@@ -50,7 +50,8 @@ if($devices->newDeviceTemplateFormSubmitted()) {
     <span class="content_block">
         <div class="page_subtitle">Registered Devices</div>
         <hr class="header_spacer"/>
-        <?php $devices->generateRegisteredDevicesList(); ?>
+        <div>Below you will find a list of all registered devices, sorted by name, callsign and then deviceid.</div><br/>
+        <?php $devices->generateRegisteredDevicesList($_POST["serachRegisteredDevices_field"], $_POST["serachRegisteredDevices_value"], $_POST["serachRegisteredDevices_reset"]); ?>
     </span>
     <br/><br/>
     <span class="content_block">

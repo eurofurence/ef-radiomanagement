@@ -25,6 +25,7 @@ class devices {
 
         //Generate table from query
         ?>
+        <b>//FIXME: Delete also devices with tplid and delete bindings!</b>
         <form style="display: inline;" method="POST" action="<?=domain?>index.php?p=devices" id="devicetpl_edit_form">
             <input type="hidden" name="devicetpl_edit_form_submitted" value="true"/>
             <input type="hidden" name="devicetpl_edit_form_action" id="devicetpl_edit_form_action" value="0"/>
@@ -151,32 +152,54 @@ class devices {
     /* generateRegisteredDevicesList()
      *
      * This function generates a list of all registered devices
+     *
+     * @param $search_field The field to perform a specific search in (If == false => no search is performed)
+     * @param $search_value The value to search for
      */
-    public function generateRegisteredDevicesList() {
+    public function generateRegisteredDevicesList($search_field, $search_value) {
         //Gain db access
         global $db;
 
-        //Query all registered devices without callsign
-        $query_no_callsigns = $db->query("
-        SELECT COUNT(*), devices.`devicetemplateid`, devicetemplates.`name`
+        //Build search-argument if necessary
+        if(!$search_value) { $search_field=false; }
+        switch($search_field) {
+            case "deviceid": $sqlSearch = "`deviceid` LIKE '%".$db->escape($search_value)."%'"; break;
+            case "name": $sqlSearch = "`name` LIKE '%".$db->escape($search_value)."%'"; break;
+            case "callsign": $sqlSearch = "`callsign` LIKE '%".$db->escape($search_value)."%'"; break;
+            case "serialnumber": $sqlSearch = "`serialnumber` LIKE '%".$db->escape($search_value)."%'"; break;
+            case "notes": $sqlSearch = "`notes` LIKE '%".$db->escape($search_value)."%'"; break;
+            default: $sqlSearch = "1=1"; break;
+        }
+
+        //Query all registered devices
+        $query = $db->query("
+            SELECT  devices.*, devicetemplates.`name`
             FROM `devices` devices, `devicetemplates` devicetemplates
-            WHERE `callsign` IS NULL AND
-            devices.`devicetemplateid` = devicetemplates.`devicetemplateid`
-            GROUP BY `devicetemplateid`
-            ORDER BY `deviceid` ASC");
+            WHERE devices.`devicetemplateid` = devicetemplates.`devicetemplateid` AND ".$sqlSearch."
+            ORDER BY `name`, `callsign`, `deviceid` ASC");
         if($db->isError()) { die($db->isError()); }
 
-        //Query all registered devices with callsign
-        $query_callsigns = $db->query("
-            SELECT devices.*, devicetemplates.`name`
-            FROM `devices` devices, `devicetemplates` devicetemplates
-            WHERE `callsign` IS NOT NULL AND
-            devices.`devicetemplateid` = devicetemplates.`devicetemplateid`
-            ORDER BY `callsign` ASC");
-        if($db->isError()) { die($db->isError()); }
+        //Output search-form
+        if(!$search_field) { $optionSelected = "callsign"; }
+        else { $optionSelected = $search_field; }
+        ?>
+        <form method="POST" id="deviceSearchForm" action="<?=domain?>index.php?p=devices" style="margin-bottom: 2px;">
+            <input type="hidden" name="serachRegisteredDevices_reset" id=serachRegisteredDevices_reset" value=""/>
+            Search:&nbsp;
+            <select name="serachRegisteredDevices_field" required>
+                <option value="deviceid" <?php if($optionSelected=="deviceid") echo "selected"; ?>>DeviceID</option>
+                <option value="name" <?php if($optionSelected=="name") echo "selected"; ?>>Name</option>
+                <option value="callsign" <?php if($optionSelected=="callsign") echo "selected"; ?>>Callsign</option>
+                <option value="serialnumber" <?php if($optionSelected=="serialnumber") echo "selected"; ?>>Serialnumber</option>
+                <option value="notes" <?php if($optionSelected=="notes") echo "selected"; ?>>Notes</option>
+            </select>
+            <input type="text" name="serachRegisteredDevices_value" value="<?=$search_value?>" placeholder="String to search for" style="width: 200px;"/>
+            <input type="submit" value="Search"/>
+        </form>
+        <?php
 
         //Check if devices are present
-        if(mysqli_num_rows($query_callsigns)<1 && mysqli_num_rows($query_no_callsigns)<1) {
+        if(mysqli_num_rows($query)<1) {
             ?><div>There are currently no devices registered in the database. <a href="#">Register a new device now!</a></div><?php
             return true;
         }
@@ -186,7 +209,6 @@ class devices {
         <table class="devicelist" style="margin-left: 0px;">
             <tr>
                 <td class="devicelist_head">DID</td>
-                <td class="devicelist_head">Amount</td>
                 <td class="devicelist_head">Name (DTID)</td>
                 <td class="devicelist_head">Callsign</td>
                 <td class="devicelist_head">S/N</td>
@@ -194,35 +216,14 @@ class devices {
             </tr>
         <?php
 
+        //Spit out devices
         $row_color = "even";
-
-        //Spit out devices without callsign (aka. groupable ones)
-        while($row = mysqli_fetch_object($query_no_callsigns)) {
-            if($row_color == "even") { $row_color = "odd"; }
-            else { $row_color = "even"; }
-            ?>
-            <tr class="devicelist_<?=$row_color?>">
-                <td></td>
-                <td><?=$row->{"COUNT(*)"}?></td>
-                <td><?=$row->{"name"}?>&nbsp;(<?=$row->{"devicetemplateid"}?>)</td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <?php
-        }
-
-        //Insert seperator <tr>
-        ?><tr style="background-color: #AAAAAA;"><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><?php
-
-        //Spit out devices with callsign
-        while($row = mysqli_fetch_object($query_callsigns)) {
+        while($row = mysqli_fetch_object($query)) {
             if($row_color == "even") { $row_color = "odd"; }
             else { $row_color = "even"; }
             ?>
             <tr class="devicelist_<?=$row_color?>">
                 <td><?=$row->{"deviceid"}?></td>
-                <td></td>
                 <td><?=$row->{"name"}?>&nbsp;(<?=$row->{"devicetemplateid"}?>)</td>
                 <td><?=$row->{"callsign"}?></td>
                 <td><?=$row->{"serialnumber"}?></td>

@@ -58,7 +58,7 @@ span.content_block {
     text-align: left;
 }
 
-form input {
+form input, form select, button {
     border: 1px solid #006357;
 }
 
