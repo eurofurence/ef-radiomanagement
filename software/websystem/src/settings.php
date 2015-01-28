@@ -55,5 +55,6 @@ $_TEMPLATES[] = array("alias" => "logout", "file" => dir_pagetpl."logout.tpl.php
 $_TEMPLATES[] = array("alias" => "overview", "file" => dir_pagetpl."overview.tpl.php", "accessLevel" => 1);
 $_TEMPLATES[] = array("alias" => "devices", "file" => dir_pagetpl."devices.tpl.php", "accessLevel" => 3);
 $_TEMPLATES[] = array("alias" => "users", "file" => dir_pagetpl."users.tpl.php", "accessLevel" => 3);
+$_TEMPLATES[] = array("alias" => "bindings", "file" => dir_pagetpl."bindings.tpl.php", "accessLevel" => 3);
 
 ?>
