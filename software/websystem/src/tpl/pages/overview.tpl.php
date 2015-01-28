@@ -5,7 +5,7 @@ require_once(func_bindings);
 $bindings = new bindings();
 ?>
 
-<div class="content_wrapper">
+<td class="content_td">
     <div class="page_title">Overview</div>
     <hr class="header_spacer"/>
     <span style="display: inline-block; max-width: 600px;">
@@ -26,6 +26,6 @@ $bindings = new bindings();
         <hr class="header_spacer"/>
         <?php $bindings->generateCallsignList(); ?>
     </span>
-</div>
+</td>
 
 <?php require_once(basetpl_footer); ?>

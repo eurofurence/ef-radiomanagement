@@ -1,4 +1,4 @@
-<div class="navi_wrapper">
+<td class="navi_td">
     <a href="<?=domain?>index.php?p=overview"><img src="<?=domain.dir_img?>logo.png" /></a>
     <hr class="navi_spacer"/>
     <div class="navi_logininfo">
@@ -16,5 +16,5 @@
         default: break;
     }
     ?>
-
-</div>
+</td>
+<td class="navi_spacer"></td>

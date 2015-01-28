@@ -5,3 +5,5 @@
         <link rel="icon" href="<?=domain.dir_img?>favicon.png" type="image/png" />
     </head>
     <body>
+        <table class="content_wrapper">
+            <tr>

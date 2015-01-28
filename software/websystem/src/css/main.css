@@ -27,8 +27,17 @@ div.page_subtitle {
     font-weight: bold;
 }
 
-div.content_wrapper {
-    padding-top: 10px;
+table.content_wrapper {
+    height: 100%;
+    min-width: 100%;
+    margin: 0px;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+table.content_wrapper td {
+    padding: 0px 0px 0px 0px;
+    vertical-align: top;
 }
 
 a:link, a:visited {
@@ -116,14 +125,17 @@ a.navilink:hover, a.navilink:active {
     text-decoration: underline;
 }
 
-div.navi_wrapper {
-    float: left;
+td.navi_td {
+    vertical-align: top;
     width: 200px;
     height: 100%;
     min-height: 100%;
     background-color: #006357;
-    margin-right: 10px;
     color: #FFFFFF;
+}
+
+td.navi_spacer {
+    width: 10px;
 }
 
 div.navi_logininfo {

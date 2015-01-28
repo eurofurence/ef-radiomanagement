@@ -46,14 +46,14 @@ if($devices->deleteDeviceFormSubmitted()) {
     if(!$devices->deleteDevice($_POST["deleteDeviceForm_deviceid"])) { $deleteDeviceError = true; }
 }
 ?>
+<td class="content_td">
     <script src="<?=domain.dir_js?>devices.js"></script>
-    <div class="content_wrapper">
-        <div class="page_title">Devices</div>
-        <hr class="header_spacer"/>
+    <div class="page_title">Devices</div>
+    <hr class="header_spacer"/>
     <span style="display: inline-block; max-width: 600px;">
         This page gives you access to all device specific data like current available devices, device-templates and some stats.
     </span><br/>
-        <br/>
+    <br/>
 
     <span class="content_block">
         <div class="page_subtitle">Device Templates</div>
@@ -150,7 +150,8 @@ if($devices->deleteDeviceFormSubmitted()) {
             </form>
         </div>
     </span>
-    <br/>
+    <br/><br/>
+</td>
 
 <?php
 if($newDeviceSingleError) { ?><script type="text/javascript">spawnNewDeviceSingleForm();</script><?php }
