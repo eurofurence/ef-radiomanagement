@@ -8,9 +8,14 @@ $bindings = new bindings();
 <td class="content_td">
     <div class="page_title">Users</div>
     <hr class="header_spacer"/>
-    <span style="display: inline-block; max-width: 600px;">
-        <span>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium dolorum eos exercitationem fugiat non odit possimus qui quisquam reiciendis, tempora? Quas quo, reiciendis. Accusantium ea nihil optio perspiciatis quo sequi.</span><span>Ea et non sequi voluptates. Alias aliquam aperiam, blanditiis consequatur delectus distinctio ex excepturi facere incidunt ipsa itaque labore molestiae officia praesentium provident quis recusandae sed tempore unde vel voluptatum.</span><span>Adipisci cupiditate delectus dolore, eius error exercitationem fugiat hic id, incidunt ipsam iure laborum perspiciatis, praesentium? Molestiae nisi, sed? Atque beatae est iure maxime pariatur recusandae. Adipisci atque ducimus facere.</span>
-    </span><br/>
+
+    <span class="content_block">This page gives you an access to all user related database entries.</span><br/>
+    <br/>
+
+    <span class="content_block">
+        <div class="page_subtitle">Registered Users</div>
+        <hr class="header_spacer"/>
+        <?php $sessions->genreateUserList($_POST["usersSearchForm_field"], $_POST["usersSearchForm_value"]); ?>
     <br/>
 </td>
 

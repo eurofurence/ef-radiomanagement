@@ -32,18 +32,21 @@
                         <table>
                             <tr>
                                 <td style="text-align: right; font-size: 10pt;">Nickname</td>
+                                <td>&nbsp;</td>
                                 <td><input type="text" name="loginform_nickname" placeholder="Randomfur" value="<?=$_POST["loginform_nickname"]?>" style="width: 200px;" required/></td>
                             </tr>
                             <tr>
                                 <td style="text-align: right; font-size: 10pt;">Reg-ID</td>
+                                <td>&nbsp;</td>
                                 <td><input type="text" name="loginform_regid" placeholder="1234" value="<?=$_POST["loginform_regid"]?>" style="width: 50px;" required/></td>
                             </tr>
                             <tr>
                                 <td style="text-align: right; font-size: 10pt;">Password (Opt.)</td>
+                                <td>&nbsp;</td>
                                 <td><input type="password" name="loginform_password" placeholder="************" style="width: 200px;"/></td>
                             </tr>
                             <tr>
-                                <td></td><td style="text-align: right;"><a style="font-size: 12px;" href="<?=domain?>">Back</a>&nbsp;&nbsp;<input type="submit" value="Login" style="border: 1px solid #006357; width: 60px;"/></td>
+                                <td></td><td>&nbsp;</td><td style="text-align: right;"><a style="font-size: 12px;" href="<?=domain?>">Back</a>&nbsp;&nbsp;<input type="submit" value="Login" style="border: 1px solid #006357; width: 60px;"/></td>
                             </tr>
                         </table>
                     </form>

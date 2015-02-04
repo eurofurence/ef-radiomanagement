@@ -275,3 +275,11 @@ tr.devicelist_even {
 tr.devicelist_odd:hover, tr.devicelist_even:hover {
     background-color: rgba(0, 38, 124, 0.30);
 }
+
+/* ##### Users-Styles ##### */
+div.userlist_wrapper {
+    max-height: 450px;
+    max-width: 700px;
+    overflow: auto;
+    resize: both;
+}

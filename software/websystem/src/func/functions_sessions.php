@@ -178,6 +178,120 @@ class sessions {
         return false;
     }
 
+
+    /* generateUserList()
+     *
+     * This function generates a table bases list of all currently registered users
+     *
+     * @param $serach_field The database-field the serach query is for
+     * @param $search_value The value to serach for in the specified field
+     */
+    public function genreateUserList($search_field, $search_value) {
+        //Gain db access
+        global $db;
+
+        //Build search-argument if necessary
+        if(!$search_value) { $search_field=false; }
+        switch($search_field) {
+            case "nickname": $sqlSearch = "`nickname` LIKE '%".$db->escape($search_value)."%'"; break;
+            case "regid": $sqlSearch = "`regid` LIKE '%".$db->escape($search_value)."%'"; break;
+            case "userid": $sqlSearch = "`userid` LIKE '%".$db->escape($search_value)."%'"; break;
+            default: $sqlSearch = "1=1"; break;
+        }
+
+        //Get users from database
+        $query_users = $db->query("SELECT `userid`, `regid`, `userlevel`, `nickname` FROM `users` WHERE ".$sqlSearch." ORDER BY `nickname` ASC");
+        if($db->isError()) { die($db->isError()); }
+
+        //Get amount of bindings for user
+        $query_bindingcount = $db->query("SELECT `userid`, COUNT(*) FROM `bindings` GROUP BY `userid` ORDER BY `userid` ASC");
+        if($db->isError()) { die($db->isError()); }
+
+        //Print serach-form
+        if(!$search_field) { $optionSelected = "callsign"; }
+        else { $optionSelected = $search_field; }
+        ?>
+        <form method="POST" id="usersSearchForm" action="<?=domain?>index.php?p=users" style="margin-bottom: 2px; magin-top: 5px;">
+            <input type="hidden" name="usersSearchForm_reset" id=usersSearchForm_reset" value=""/>
+            <table>
+                <tr>
+                    <td style="text-align: right; font-size: 12px;">Search:</td>
+                    <td style="text-align: left;">
+                        <select name="usersSearchForm_field" required>
+                            <option value="nickname" <?php if($optionSelected=="nickname") echo "selected"; ?>>Nickname</option>
+                            <option value="regid" <?php if($optionSelected=="regid") echo "selected"; ?>>Reg-ID</option>
+                            <option value="userid" <?php if($optionSelected=="userid") echo "selected"; ?>>User-ID</option>
+                        </select>
+                        <input type="text" name="usersSearchForm_value" value="<?=$search_value?>" placeholder="String to search for" style="width: 200px;"/>
+                        <input type="submit" value="Submit"/>
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <?php
+
+        //Check if users are present
+        if(mysqli_num_rows($query_users)<1) {
+            ?>There are currently no users in the database! <a href="#" onclick="spawnUserCreationForm()">Register one now!</a><?php
+            return true;
+        }
+
+        //Generate array from user-bindings
+        $userBindings = array();
+        while($row = mysqli_fetch_object($query_bindingcount)) {
+            $userBindings[$row->{"userid"}] = $row->{"COUNT(*)"};
+        }
+
+        //Output table with all users
+        ?>
+        <div class="userlist_wrapper" id="userlist_wrapper">
+        <table class="gptable" style="margin-left: 0px; min-width: 450px;">
+            <tr>
+                <td class="gptable_head">Nickname</td>
+                <td class="gptable_head">BC</td>
+                <td class="gptable_head">UID</td>
+                <td class="gptable_head">RID</td>
+                <td class="gptable_head">Rights</td>
+            </tr>
+        <?php
+
+        $row_color = "even";
+        while($row = mysqli_fetch_object($query_users)) {
+            if($row_color == "even") { $row_color = "odd"; }
+            else { $row_color = "even"; }
+            ?>
+            <tr class="gptable_<?=$row_color?>">
+                <td><?=$row->{"nickname"}?></td>
+                <td>
+                    <?php
+                        if($userBindings[$row->{"userid"}]) {
+                            echo $userBindings[$row->{"userid"}];
+                        } else {
+                            echo "0";
+                        }
+                    ?>
+                </td>
+                <td><?=$row->{"userid"}?></td>
+                <td><?=$row->{"regid"}?></td>
+                <td>
+                    <?php
+                        switch($row->{"userlevel"}) {
+                            case 1: echo "User"; break;
+                            case 2: echo "Mod"; break;
+                            case 3: echo "Admin"; break;
+                            default: echo "Error!"; break;
+                        }
+                    ?>
+                </td>
+            </tr>
+            <?php
+        }
+
+        ?></table></div><i>BC: BindingCount&nbsp;&nbsp;-&nbsp;&nbsp;UID: UserID&nbsp;&nbsp;-&nbsp;&nbsp;RID: RegID</i><?php
+
+        return true;
+    }
+
 }
 
 ?>
