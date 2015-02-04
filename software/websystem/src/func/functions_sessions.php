@@ -287,7 +287,10 @@ class sessions {
             <?php
         }
 
-        ?></table></div><i>BC: BindingCount&nbsp;&nbsp;-&nbsp;&nbsp;UID: UserID&nbsp;&nbsp;-&nbsp;&nbsp;RID: RegID</i><?php
+        ?>
+        </table></div>
+        <i>BC: BindingCount&nbsp;&nbsp;-&nbsp;&nbsp;UID: UserID&nbsp;&nbsp;-&nbsp;&nbsp;RID: RegID</i>&nbsp;&nbsp;-&nbsp;&nbsp;<a href="#" onclick="spawnNewUserForm()">Create new User</a>
+        <?php
 
         return true;
     }
