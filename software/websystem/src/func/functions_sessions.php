@@ -11,9 +11,7 @@ class sessions {
     /* Error handling vars */
     var $error_login_not_found;
     var $error_login_data_not_entered;
-
-    /* State vars */
-    var $loginSuccessful = false;
+    var $error_createNewUser;
 
     /* __construct()
      *
@@ -252,6 +250,7 @@ class sessions {
                 <td class="gptable_head">UID</td>
                 <td class="gptable_head">RID</td>
                 <td class="gptable_head">Rights</td>
+                <td class="gptable_head"></td>
             </tr>
         <?php
 
@@ -283,6 +282,7 @@ class sessions {
                         }
                     ?>
                 </td>
+                <td style="vertical-align: middle; width:15px;"><a href="#" onclick="deleteUser(<?=$row->{"userid"}?>)" title="Delete User"><img src="<?=domain.dir_img?>trashbin.png" alt="X"/></a></td>
             </tr>
             <?php
         }
@@ -295,6 +295,111 @@ class sessions {
         return true;
     }
 
+    /* newUserFormSubmitted()
+     *
+     * This function checks if the newUserForm was submitted
+     *
+     * @return TRUE Form was submitteed
+     * @return FASLE Form was NOT submitted
+     */
+    public function newUserFormSubmitted() {
+        //Check if form was submitted
+        if($_POST["newUserForm_submitted"]) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /* createNewUser()
+     *
+     * This function tries to create a new user
+     *
+     * @param $nickname The given nickname
+     * @param $regid The registration ID
+     * @param $userlevel The desired userlevel as int
+     * @param $password (Optional) A password for the user
+     * @param $password_rep (Optional) The password repetition
+     *
+     * @return TRUE Success, user created
+     * @return FALSE Error, user NOT created
+     */
+    public function createNewUser($nickname, $regid, $userlevel, $password, $password_rep) {
+        //Check input
+        if(!$nickname || !$regid || !$userlevel) { return false; }
+        if(!is_numeric($regid) || !is_numeric($userlevel) || $userlevel<1 || $userlevel>3) { return false; }
+
+        //Gain db access
+        global $db;
+
+        //Check if username already exist
+        $query_checkNickname = $db->query("SELECT `userid` FROM `users` WHERE `nickname`='".$db->escape($nickname)."' LIMIT 1");
+        if($db->isError()) { die($db->isError()); }
+        if(mysqli_fetch_object($query_checkNickname)->{"userid"}) { return false; }
+
+        //Hash password if present
+        //FIXME: Not working if $password is given
+        if($password) {
+            //Check if passwords are valid
+            if($password!=$password_rep || $password>60 || $password<4) { return false; }
+
+            //Hash password
+            $password = self::hashPassword($password);
+        } else { $password=""; }
+
+        //Create new database entry for user
+        $db->query("INSERT INTO `users` (`regid`, `userlevel`, `nickname`, `password`) VALUES
+                    ('".$db->escape($regid)."',
+                    '".$db->escape($userlevel)."',
+                    '".$db->escape($nickname)."',
+                    '".$db->escape($password)."')");
+        if($db->isError()) { die($db->isError()); }
+
+        //User created if code here is reached
+        return true;
+
+    }
+
+    /* deleteUserFormSubmitted()
+     *
+     * This form checks if the deleteUserForm was submitted
+     *
+     * @return TRUE Form was submitted
+     * @return FALSE Form was NOT submitted
+     */
+    public function deleteUserFormSubmitted() {
+        //Check form
+        if($_POST["deleteUserForm_submitted"]) { return true; }
+        return false;
+    }
+
+    /* deleteUser()
+     *
+     * This function deletes the given user and all associated bindings
+     *
+     * @param $userid The UID of the user to delete
+     *
+     * @param TRUE Success, user was deleted
+     * @param FALSE Error, user was not deleted
+     */
+    public function deleteUser($userid) {
+        //FIXME: Check if it works correctly
+        //Check input
+        if(!$userid || !is_numeric($userid) || $userid<1) { return false; }
+
+        //Gain db access
+        global $db;
+
+        //Delete all associated bindings
+        $db->query("DELETE FROM `bindings` WHERE `userid`='".$db->escape($userid)."'");
+        if($db->isError()) { die($db->isError()); }
+
+        //Delete user
+        $db->query("DELETE FROM `users` WHERE `userid`='".$db->escape($userid)."' LIMIT 1");
+        if($db->isError()) { die($db->isError()); }
+
+        return true;
+    }
 }
 
 ?>
