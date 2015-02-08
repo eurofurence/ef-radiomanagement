@@ -283,3 +283,11 @@ div.userlist_wrapper {
     overflow: auto;
     resize: both;
 }
+
+/* ##### Bindings-Styles ##### */
+div.bindinglist_wrapper {
+    max-height: 450px;
+    max-width: 7150px;
+    overflow: auto;
+    resize: both;
+}
