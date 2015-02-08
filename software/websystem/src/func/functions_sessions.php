@@ -338,14 +338,17 @@ class sessions {
         if(mysqli_fetch_object($query_checkNickname)->{"userid"}) { return false; }
 
         //Hash password if present
-        //FIXME: Not working if $password is given
         if($password) {
             //Check if passwords are valid
-            if($password!=$password_rep || $password>60 || $password<4) { return false; }
+            if($password!=$password_rep || strlen($password)>60 || strlen($password)<4) { return false; }
 
             //Hash password
             $password = self::hashPassword($password);
-        } else { $password=""; }
+        } else {
+            //Check if userlevel requires password
+            if($userlevel>1) { return false; }
+            $password="";
+        }
 
         //Create new database entry for user
         $db->query("INSERT INTO `users` (`regid`, `userlevel`, `nickname`, `password`) VALUES
@@ -383,7 +386,6 @@ class sessions {
      * @param FALSE Error, user was not deleted
      */
     public function deleteUser($userid) {
-        //FIXME: Check if it works correctly
         //Check input
         if(!$userid || !is_numeric($userid) || $userid<1) { return false; }
 
