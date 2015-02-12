@@ -129,6 +129,9 @@ class bindings {
         //Gain db access
         global $db;
 
+        //Reset serach_field if search_value is not present
+        if(!$search_value) { $search_field = false; }
+
         //Get bindings from database
         $query_bindings = $db->query("SELECT * FROM `bindings`");
         if($db->isError()) { die($db->isError()); }
@@ -165,11 +168,10 @@ class bindings {
                     <td style="text-align: right; font-size: 12px;">Search:</td>
                     <td style="text-align: left;">
                         <select name="bindingListSearchForm_field" required>
-                            <option value="nickname" <?php if($optionSelected=="nickname") echo "selected"; ?>>Nickname</option>
-                            <option value="deviceid" <?php if($optionSelected=="deviceid") echo "selected"; ?>>Device-ID</option>
-                            <option value="callsign" <?php if($optionSelected=="callsign") echo "selected"; ?>>Callsign</option>
-                            <option value="regid" <?php if($optionSelected=="regid") echo "selected"; ?>>Reg-ID</option>
-                            <option value="userid" <?php if($optionSelected=="userid") echo "selected"; ?>>User-ID</option>
+                            <option value="nickname" <?php if($search_field=="nickname") echo "selected"; ?>>Nickname</option>
+                            <option value="deviceid" <?php if($search_field=="deviceid") echo "selected"; ?>>Device-ID</option>
+                            <option value="callsign" <?php if($search_field=="callsign") echo "selected"; ?>>Callsign</option>
+                            <option value="userid" <?php if($search_field=="userid") echo "selected"; ?>>User-ID</option>
                         </select>
                         <input type="text" name="bindingListSearchForm_value" value="<?=$search_value?>" placeholder="String to search for" style="width: 200px;"/>
                         <input type="submit" value="Submit"/>
@@ -195,19 +197,32 @@ class bindings {
         <?php
         $row_color = "even";
         while($row = mysqli_fetch_object($query_bindings)) {
+            //Calculate row-color
             if($row_color == "even") { $row_color = "odd"; }
             else { $row_color = "even"; }
-            ?>
-            <tr class="gptable_<?=$row_color?>">
-                <td><?=$row->{"bindingid"}?></td>
-                <td><?=$users[$row->{"userid"}]?> (<?=$row->{"userid"}?>)</td>
-                <td><?=$devices[$row->{"deviceid"}]->{"name"}?> (<?=$row->{"deviceid"}?>)</td>
-                <td><?=$devices[$row->{"deviceid"}]->{"callsign"}?></td>
-                <td><?=date("d.m.y H:i", strtotime($row->{"bound_since"}))?></td>
-                <td><?=$users[$row->{"bound_by"}]?> (<?=$row->{"bound_by"}?>)</td>
-                <td style="vertical-align: middle;"><a href="#" onclick="deleteBinding('<?=$row->{"bindingid"}?>')"><img src="<?=domain.dir_img?>trashbin.png"</a></td>
-            </tr>
-            <?php
+
+            //Check if search-parsing is required
+            $outputRow = true;
+            switch($search_field) {
+                case "nickname": if(strpos($users[$row->{"userid"}], $search_value) === false) { $outputRow = false; } break;
+                case "deviceid": if(strpos($row->{"deviceid"}, $search_value) === false) { $outputRow = false; } break;
+                case "callsign": if(strpos($devices[$row->{"deviceid"}]->{"callsign"}, $search_value) === false) { $outputRow = false; } break;
+                case "userid": if(strpos($row->{"userid"}, $search_value) === false) { $outputRow = false; } break;
+            }
+
+            if($outputRow) {
+                ?>
+                <tr class="gptable_<?=$row_color?>">
+                    <td><?=$row->{"bindingid"}?></td>
+                    <td><?=$users[$row->{"userid"}]?> (<?=$row->{"userid"}?>)</td>
+                    <td><?=$devices[$row->{"deviceid"}]->{"name"}?> (<?=$row->{"deviceid"}?>)</td>
+                    <td><?=$devices[$row->{"deviceid"}]->{"callsign"}?></td>
+                    <td><?=date("d.m.y H:i", strtotime($row->{"bound_since"}))?></td>
+                    <td><?=$users[$row->{"bound_by"}]?> (<?=$row->{"bound_by"}?>)</td>
+                    <td style="vertical-align: middle;"><a href="#" onclick="deleteBinding('<?=$row->{"bindingid"}?>')"><img src="<?=domain.dir_img?>trashbin.png"</a></td>
+                </tr>
+                <?php
+            }
         }
         ?></table></div><?php
     }

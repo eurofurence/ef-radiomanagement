@@ -15,7 +15,7 @@ $bindings = new bindings();
         <div class="page_subtitle">Active bindings</div>
         <hr class="header_spacer"/>
         <span class="content_block">The tabel below contains all active bindings and is searchable.</span><br/>
-        <?php $bindings->generateBindingsList(false, false); ?>
+        <?php $bindings->generateBindingsList($_POST["bindingListSearchForm_field"], $_POST["bindingListSearchForm_value"]); ?>
         Klick <a href="<?=domain?>index.php?p=add_binding">here</a> to add a new binding!
     </span><br/>
 
