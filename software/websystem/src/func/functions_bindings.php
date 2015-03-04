@@ -226,6 +226,174 @@ class bindings {
         }
         ?></table></div><?php
     }
+
+    /* addBinding_printSearchUserForm()
+     *
+     * This function generates the form for the first step
+     * of creating a new binding (Seraching for user)
+     *
+     * @param $userNotFound TRUE if no user was found
+     */
+    public function addBinding_printSearchUserForm($userNotFound) {
+        ?>
+        <span class="content_block">
+        <div class="page_subtitle">Search for User</div>
+        <hr class="header_spacer"/>
+        <span class="content_block">Please scan or enter the desired users Registration-ID or Nickname!</span><br/>
+            <br/>
+            <table>
+                <tr>
+                    <td style="vertical-align: middle;"><img src="<?=domain.dir_img?>usercard.png"/></td>
+                    <td>&nbsp;&nbsp;</td>
+                    <td style="vertical-align: middle;">
+                        <form method="POST" action="<?=domain?>index.php?p=add_binding" name="addBinding_searchUserForm">
+                            <span style="font-size: 12px;">Reg-ID / Nickname</span><br/>
+                            <?php if($userNotFound) { ?><span style="font-size: 12px;"><b style="color: #EE0000;">Error, no user was found!</b></span><br/><?php } ?>
+                            <input type="hidden" name="addBinding_searchUserForm_submitted" value="true" />
+                            <input type="text" name="addBinding_searchUserForm_searchString" style="width: 225px;" value="" placeholder="Enter or scan ID or nick!" size="30" autocomplete="off" required autofocus/><br/>
+                            <input style="float: right; margin-top: 3px;" type="submit" value="Serach"/>
+                        </form>
+                    </td>
+                </tr>
+            </table>
+        </span><br/>
+        <?php
+
+        return true;
+    }
+
+    /* searchUserForm_submitted()
+     *
+     * This function checks if the form was submitted
+     *
+     * @return TRUE Form was submitted
+     * @return FALSE Form was NOT submitted
+     */
+     public function searchUserForm_submitted() {
+         if($_POST["addBinding_searchUserForm_submitted"]) { return true; }
+
+         return false;
+     }
+
+    /* addBinding_selectUser()
+     *
+     * This function checks if desired user was found and offers a selection
+     *
+     * @param $searchString The given search-value from addBinding_printSearchUserForm()
+     * @param $userIdOverride If containing a user ID the given ID is selected
+     */
+    public function addBinding_selectUser($searchString, $userIdOverride) {
+        //Search for users
+        global $sessions;
+        if(!$userIdOverride) {
+            $searchUsers = $sessions->findUser($searchString, $searchString, false);
+        } else {
+            $searchUsers = $sessions->findUser(false, false, $userIdOverride);
+        }
+
+        //Check if users were found
+        if(sizeof($searchUsers)<1) { self::addBinding_printSearchUserForm(true); return false; }
+
+        //Check if multiple users were found
+        if(sizeof($searchUsers)>1) {
+            //Print gptable for user-selection
+            ?>
+            <span class="content_block">
+            <div class="page_subtitle">Search for User</div>
+            <hr class="header_spacer"/>
+            <div style="margin-bottom: 2px;">Multiple users are matching your search. Please select one from below!</div>
+            <div class="userlist_wrapper" id="userlist_wrapper">
+            <table class="gptable" style="margin-left: 0px;">
+                <tr>
+                    <td class="gptable_head">UID</td>
+                    <td class="gptable_head">RID</td>
+                    <td class="gptable_head">Nickname</td>
+                    <td class="gptable_head">&nbsp;</td>
+                </tr>
+                <?php
+                //Spit out devices
+                $row_color = "even";
+                foreach($searchUsers as $user) {
+                    if($row_color == "even") { $row_color = "odd"; }
+                    else { $row_color = "even"; }
+                    ?>
+                    <tr class="gptable_<?=$row_color?>">
+                        <td><?=$user->{"userid"}?></td>
+                        <td><?=$user->{"regid"}?></td>
+                        <td><?=$user->{"nickname"}?></td>
+                        <td><a href="<?=domain?>index.php?p=add_binding&searchUser_userid=<?=$user->{"userid"}?>" title="Select User"><img src="<?=domain.dir_img?>check.png"/></a></td>
+                    </tr>
+                <?php
+                }
+            ?></table></div><i>UID: Userid</i>&nbsp;&nbsp;-&nbsp;&nbsp;<i>RID: RegID</i><br/>
+            <?php
+            return true;
+        }
+
+        //Only one user was found, print device-selection form
+        $_SESSION["addBinding"]["user"] = array_values($searchUsers)[0];
+        self::addBinding_printSearchDeviceForm(false);
+
+        return true;
+    }
+
+    /* addBinding_printSearchDeviceForm()
+     *
+     * This function prints the searchDeviceForm
+     *
+     * @param $deviceNotFound TRUE if no device was found
+     */
+    public function addBinding_printSearchDeviceForm($deviceNotFound) {
+        ?>
+        <span class="content_block">
+            <div class="page_subtitle">Search for Device</div>
+            <hr class="header_spacer"/>
+            <span class="content_block">Please scan or enter the desired device's callsign, name or DID!</span><br/>
+            <br/>
+            <table>
+                <tr>
+                    <td style="vertical-align: middle;"><img src="<?=domain.dir_img?>barcode_scan.png"/></td>
+                    <td>&nbsp;&nbsp;</td>
+                    <td style="vertical-align: middle;">
+                        <form method="POST" action="<?=domain?>index.php?p=add_binding" name="addBinding_searchDeviceForm">
+                            <span style="font-size: 12px;">Callsign, Name or DID</span><br/>
+                            <input type="hidden" name="addBinding_searchDeviceForm_submitted" value="true" />
+                            <?php if($deviceNotFound) { ?><b style="color: #EE0000;">Error, no device was found!</b><?php } ?>
+                            <input type="text" name="addBinding_searchDeviceForm_searchString" style="width: 225px;" value="" placeholder="Enter or scan search value!" size="30" autocomplete="off" required autofocus/><br/>
+                            <input style="float: right; margin-top: 3px;" type="submit" value="Serach"/>
+                        </form>
+                    </td>
+                </tr>
+            </table>
+        </span><br/><br/>
+        <b>Selected user:</b>&nbsp;<?=$_SESSION["addBinding"]["user"]->{"nickname"}." (RID: ".$_SESSION["addBinding"]["user"]->{"regid"}." - UID: ".$_SESSION["addBinding"]["user"]->{"userid"}.")"?> - <a href="<?domain?>index.php?p=add_binding">Cancel</a>
+        <?php
+
+        return true;
+    }
+
+    /* searchDeviceForm_submitted()
+     *
+     * Checks if searchDeviceForm was submitted
+     *
+     * @return TRUE Form was submitted
+     * @return FALSE Form was NOT submitted
+     */
+    public function searchDeviceForm_submitted() {
+        if($_POST["addBinding_searchDeviceForm_submitted"]) { return true; }
+        return false;
+    }
+
+    /* addBinding_selectDevice()
+     *
+     * This function selects a device to bind, based on the search or the DID-Override
+     *
+     * @param $searchString Search-String from searchDeviceForm
+     * @param $deviceIdOverride DID of device to force-search for (Ignores $searchString)
+     */
+    public function addBinding_selectDevice($searchString, $deviceIdOverride) {
+        //TODO: STOPPED HERE
+    }
 }
 
 ?>

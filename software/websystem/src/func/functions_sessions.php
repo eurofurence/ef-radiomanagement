@@ -402,6 +402,41 @@ class sessions {
 
         return true;
     }
+
+    /* findUser()
+     *
+     * This function returns all users matching the given pattern
+     *
+     * @param $regid The given reg-id
+     * @param $nickname The given nickname
+     * @param $userid The given userid
+     *
+     * @return ARRAY containing user-objects
+     */
+    public function findUser($regid, $nickname, $userid) {
+        //Check input
+        if(!$regid && !$nickname && !$userid) return false;
+
+        //Gain db acess
+        global $db;
+
+        //Query database
+        $searchFor = "";
+        if($regid) { $searchFor .= "`regid`='".$db->escape($regid)."' OR "; }
+        if($nickname) { $searchFor .= "`nickname` LIKE '%".$db->escape($nickname)."%' OR "; }
+        if($userid) { $searchFor .= "`userid`='".$db->escape($userid)."' OR "; }
+        $searchFor .= "TRUE=FALSE";
+        $query = $db->query("SELECT `userid`, `regid`, `nickname` FROM `users` WHERE ".$searchFor);
+        if($db->isError()) { die($db->isError()); }
+
+        //Generate user-array
+        $users = array();
+        while($row = mysqli_fetch_object($query)) {
+            $users[$row->{"userid"}] = $row;
+        }
+
+        return $users;
+    }
 }
 
 ?>

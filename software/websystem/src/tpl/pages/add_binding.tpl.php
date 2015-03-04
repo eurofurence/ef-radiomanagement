@@ -2,16 +2,34 @@
 require_once(basetpl_header);
 require(basetpl_navi);
 require_once(func_bindings);
+require_once(func_devices);
 $bindings = new bindings();
+$devices = new devices();
 ?>
 
 <td class="content_td">
     <div class="page_title">Add Binding</div>
     <hr class="header_spacer"/>
     <span style="display: inline-block; max-width: 600px;">
-        <span>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium dolorum eos exercitationem fugiat non odit possimus qui quisquam reiciendis, tempora? Quas quo, reiciendis. Accusantium ea nihil optio perspiciatis quo sequi.</span><span>Ea et non sequi voluptates. Alias aliquam aperiam, blanditiis consequatur delectus distinctio ex excepturi facere incidunt ipsa itaque labore molestiae officia praesentium provident quis recusandae sed tempore unde vel voluptatum.</span><span>Adipisci cupiditate delectus dolore, eius error exercitationem fugiat hic id, incidunt ipsam iure laborum perspiciatis, praesentium? Molestiae nisi, sed? Atque beatae est iure maxime pariatur recusandae. Adipisci atque ducimus facere.</span>
+        You can add new bindings on this page. Please create the device as well as the desired user first!
     </span><br/>
     <br/>
+    <?php
+        //Check if GET-Override for user-selection is active
+        if(!$_POST["addBinding_searchUserForm_searchString"] && $_GET["searchUser_userid"]) {
+            $_POST["addBinding_searchUserForm_submitted"] = true;
+        }
+
+        //Check for current form-state
+        if($bindings->searchUserForm_submitted()) {
+            $bindings->addBinding_selectUser($_POST["addBinding_searchUserForm_searchString"], $_GET["searchUser_userid"]);
+        } elseif($bindings->searchDeviceForm_submitted()) {
+
+        } else {
+            unset($_SESSION["addBinding"]);
+            $bindings->addBinding_printSearchUserForm(false);
+        }
+    ?>
 </td>
 
 <?php require_once(basetpl_footer); ?>
