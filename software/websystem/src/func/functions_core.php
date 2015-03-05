@@ -86,6 +86,31 @@ class core {
         } else { return false; }
     }
 
+    /* addLog()
+     *
+     * This function adds a new log to the database
+     *
+     * @param triggered_by The user that triggered the log
+     * @param $value The logs-value
+     *
+     * @return TRUE Log added
+     * @return FALSE Error, log NOT added
+     */
+    public function addLog($triggered_by, $value) {
+        //Check input
+        if(!$triggered_by || !$value) { return false; }
+
+        //Gain db access
+        global $db;
+
+        //Insert new log into database
+        $db->query("INSERT INTO `log` (`datetime`, `triggered_by`, `value`)
+        VALUES ('".$db->escape(date("Y-m-d H:i:s"))."', '".$db->escape($triggered_by)."', '".$db->escape($value)."')");
+        if($db->isError()) { die($db->isError()); }
+
+        return true;
+    }
+
 }
 
 ?>

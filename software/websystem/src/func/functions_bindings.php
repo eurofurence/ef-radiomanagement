@@ -258,6 +258,10 @@ class bindings {
         $db->query("DELETE FROM `bindings` WHERE `bindingid`='".$db->escape($bindingid)."' LIMIT 1");
         if($db->isError()) { die($db->isError()); }
 
+        //Insert Log
+        global $core, $sessions;
+        $core->addLog($sessions->getUserName()." (UID: ".$sessions->getUserId().")", "Binding with BID ".$bindingid." was deleted.");
+
         return true;
     }
 
@@ -582,6 +586,13 @@ class bindings {
         $bindingValues = trim($bindingValues, ",");
         $query = $db->query("INSERT INTO `bindings` (`userid`, `deviceid`, `bound_since`, `bound_by`) VALUES ".$bindingValues);
         if($db->isError()) { die($db->isError()); }
+
+        //Insert Log
+        global $core;
+        foreach($_SESSION["addBinding"]["devices"] as $device) {
+            $core->addLog($sessions->getUserName()." (UID: ".$sessions->getUserId().")",
+            "Bound device '".$device->{"name"}." (DID: ".$device->{"deviceid"}.")' to user '".$_SESSION["addBinding"]["user"]->{"nickname"}." (UID: ".$_SESSION["addBinding"]["user"]->{"userid"}." - RID: ".$_SESSION["addBinding"]["user"]->{"regid"}.")'.");
+        }
 
         return true;
     }

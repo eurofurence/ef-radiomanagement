@@ -358,6 +358,10 @@ class sessions {
                     '".$db->escape($password)."')");
         if($db->isError()) { die($db->isError()); }
 
+        //Add log
+        global $core, $sessions;
+        $core->addLog($sessions->getUserName()." (UID: ".$sessions->getUserId().")", "Created new user. Set nickname to '".$nickname."', regid to '".$regid."' and userlevel to '".$userlevel."'");
+
         //User created if code here is reached
         return true;
 
@@ -396,9 +400,16 @@ class sessions {
         $db->query("DELETE FROM `bindings` WHERE `userid`='".$db->escape($userid)."'");
         if($db->isError()) { die($db->isError()); }
 
+        //Add log
+        global $core, $sessions;
+        $core->addLog($sessions->getUserName()." (UID: ".$sessions->getUserId().")", "Deleted all bindings associated with user with UID ".$userid.".");
+
         //Delete user
         $db->query("DELETE FROM `users` WHERE `userid`='".$db->escape($userid)."' LIMIT 1");
         if($db->isError()) { die($db->isError()); }
+
+        //Add log
+        $core->addLog($sessions->getUserName()." (UID: ".$sessions->getUserId().")", "Deleted user with UID ".$userid.".");
 
         return true;
     }

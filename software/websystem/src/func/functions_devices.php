@@ -119,6 +119,10 @@ class devices {
             $db->query("UPDATE `devicetemplates` SET `name`='".$db->escape($_POST["devicetpl_edit_name"])."', `description`='".$db->escape($_POST["devicetpl_edit_description"])."' WHERE `devicetemplateid`='".$db->escape($_POST["devicetpl_edit_devicetemplateid"])."' LIMIT 1");
             if($db->isError()) { die($db->isError()); }
 
+            //Insert log
+            global $core, $sessions;
+            $core->addLog($sessions->getUserId(), "Updated devicetemplate with ID ".$_POST["devicetpl_edit_devicetemplateid"].". Set name to '".$_POST["devicetpl_edit_name"]."' and description to '".$_POST["devicetpl_edit_description"]."'.");
+
             return "";
 
         } elseif($_POST["devicetpl_edit_form_action"] == 2) {
@@ -135,6 +139,10 @@ class devices {
             //Delete template from db
             $db->query("DELETE FROM `devicetemplates` WHERE `devicetemplateid`='".$db->escape($_POST["devicetpl_edit_devicetemplateid"])."' LIMIT 1");
             if($db->isError()) { die($db->isError()); }
+
+            //Insert log
+            global $core, $sessions;
+            $core->addLog($sessions->getUserName()." (UID: ".$sessions->getUserId().")", "Deleted devicetemplate with the ID ".$db->escape($_POST["devicetpl_edit_devicetemplateid"]).".");
 
             return "";
         }
@@ -175,6 +183,10 @@ class devices {
         //Insert new template into device
         $db->query("INSERT INTO `devicetemplates` (`name`, `description`) VALUES ('".$db->escape($new_name)."', '".$db->escape($new_description)."')");
         if($db->isError()) { die($db->isError()); }
+
+        //Insert log
+        global $core, $sessions;
+        $core->addLog($sessions->getUserName()." (UID: ".$sessions->getUserId().")", "Added new devicetemplate. Set name to '".$new_name."' and description to '".$new_description."'.");
 
         return true;
     }
@@ -375,6 +387,10 @@ class devices {
         $db->query("INSERT INTO `devices` (`devicetemplateid`, `callsign`, `serialnumber`, `notes`) VALUES ('".$db->escape($devicetemplateid)."', '".$db->escape($callsign)."', '".$db->escape($serialnumber)."', '".$db->escape($notes)."')");
         if($db->isError()) { die($db->isError()); }
 
+        //Insert log
+        global $core, $sessions;
+        $core->addLog($sessions->getUserId(), "Created new device. Set devicetemplateid to '".$devicetemplateid."', callsign to '".$callsign."', serialnumber to '".$serialnumber."' and notes to '".$notes."'.");
+
         return true;
     }
 
@@ -406,6 +422,10 @@ class devices {
         $sqlValues = rtrim($sqlValues, ",");
         $db->query("INSERT INTO `devices` (`devicetemplateid`) VALUES ".$sqlValues);
         if($db->isError()) { die($db->isError()); }
+
+        //Insert log
+        global $core, $sessions;
+        $core->addLog($sessions->getUserName()." (UID: ".$sessions->getUserId().")", "Created ".$amount." new devices with devicetemplateid ".$devicetemplateid.".");
 
         return true;
     }
@@ -443,9 +463,16 @@ class devices {
         $db->query("DELETE FROM `bindings` WHERE `deviceid`='".$db->escape($deviceid)."'");
         if($db->isError()) { die($db->isError()); }
 
+        //Add log
+        global $core, $sessions;
+        $core->addLog($sessions->getUserName()." (UID: ".$sessions->getUserId().")", "Deleted all bindings associated with the device with DID ".$deviceid.".");
+
         //Remove device
         $db->query("DELETE FROM `devices` WHERE `deviceid`='".$db->escape($deviceid)."'");
         if($db->isError()) { die($db->isError()); }
+
+        //Add log
+        $core->addLog($sessions->getUserName()." (UID: ".$sessions->getUserId().")", "Deleted device with DID ".$deviceid.".");
 
         return true;
     }
