@@ -514,8 +514,41 @@ class bindings {
             return false;
         }
 
-        //TODO: Stopped here
-        //TODO: Check device availability before creating binding
+        //Gain db and sessions access
+        global $db;
+        global $sessions;
+
+        //Check if user-data is valid
+        if(!$_SESSION["addBinding"]["user"]->{"userid"}) { return false; }
+        $query = $db->query("SELECT COUNT(*) FROM `users` WHERE `userid`='".$db->escape($_SESSION["addBinding"]["user"]->{"userid"})."' LIMIT 1");
+        if($db->isError()) { die($db->isError()); }
+        if(mysqli_fetch_object($query)->{"COUNT(*)"}!=1) { return false; }
+
+        //Check if devices are still available
+        $deviceIdsSearchSql = "TRUE=FALSE";
+        foreach($_SESSION["addBinding"]["devices"] as $device) {
+            $deviceIdsSearchSql .= " OR devices.`deviceid`='".$db->escape($device->{"deviceid"})."'";
+        }
+        $query = $db->query("
+            SELECT COUNT(*)
+            FROM `devices` devices, `bindings` bindings
+            WHERE devices.`deviceid`=bindings.`deviceid`
+            AND (".$deviceIdsSearchSql.")");
+        if($db->isError()) { die($db->isError()); }
+        if(mysqli_fetch_object($query)->{"COUNT(*)"}>0) { return false; }
+
+        //Insert new bindings
+        $bindingValues = "";
+        foreach($_SESSION["addBinding"]["devices"] as $device) {
+            $bindingValues .= "('".$db->escape($_SESSION["addBinding"]["user"]->{"userid"})."',
+                                '".$db->escape($device->{"deviceid"})."',
+                                '".$db->escape(date("Y-m-d H:i:s"))."',
+                                '".$db->escape($sessions->getUserId())."'),";
+        }
+        $bindingValues = trim($bindingValues, ",");
+        $query = $db->query("INSERT INTO `bindings` (`userid`, `deviceid`, `bound_since`, `bound_by`) VALUES ".$bindingValues);
+        if($db->isError()) { die($db->isError()); }
+
         return true;
     }
 
@@ -526,9 +559,13 @@ class bindings {
     public function addBinding_saveBindingsCatch() {
         //Tries to save current bindings
         if(self::addBinding_saveBindings()) {
-            echo "Success";
+            ?>
+            <b style="color: #11922E">Success, desired bindings were established! :)</b><br/><br/>
+            <a href="<?domain?>index.php?p=add_binding">Add another Binding</a>
+            <?php
+            unset($_SESSION["addBinding"]);
         } else {
-            echo "Error!";
+            ?><b style="color: #EE0000;">Error, desired devices were allready bound! Resetting.</b><?php
         }
     }
 }

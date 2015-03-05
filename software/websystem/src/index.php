@@ -4,6 +4,8 @@
  * Copyright (C) 2015
  */
 
+//FIXME: TODO: Add logging
+
 //Include dependencies
 require_once("settings.php");
 require_once(func_core);
