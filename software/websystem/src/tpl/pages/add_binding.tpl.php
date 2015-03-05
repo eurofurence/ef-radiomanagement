@@ -22,7 +22,6 @@ $bindings = new bindings();
 
         //Check if GET-Override for device-selection is active
         if(!$_POST["addBinding_searchDeviceForm_searchString"] && $_GET["searchDevice_deviceid"]) {
-            $_POST["addBinding_searchDeviceForm_searchString"] = $_GET["searchDevice_deviceid"];
             $_POST["addBinding_searchDeviceForm_submitted"] = true;
         }
 
@@ -30,7 +29,16 @@ $bindings = new bindings();
         if($bindings->searchUserForm_submitted()) {
             $bindings->addBinding_selectUser($_POST["addBinding_searchUserForm_searchString"], $_GET["searchUser_userid"]);
         } elseif($bindings->searchDeviceForm_submitted()) {
-            $bindings->addBinding_selectDevice($_POST["addBinding_searchDeviceForm_searchString"]);
+            $bindings->addBinding_selectDevice($_POST["addBinding_searchDeviceForm_searchString"], $_GET["searchDevice_deviceid"]);
+        } elseif($_GET["addBinding_additionalDevice"]=="true") {
+            $bindings->addBinding_printSearchDeviceForm(false);
+        } elseif(isset($_GET["addBinding_removeDevice"])) {
+            //Remove desired device from $_SESSION and regenerate review-form
+            unset($_SESSION["addBinding"]["devices"][$_GET["addBinding_removeDevice"]]);
+            if(sizeof($_SESSION["addBinding"]["devices"])<1) { $bindings->addBinding_printSearchDeviceForm(false); }
+            else { $bindings->addBinding_printReviewForm(); }
+        } elseif($_GET["saveBinding"]=="true") {
+            $bindings->addBinding_saveBindingsCatch();
         } else {
             unset($_SESSION["addBinding"]);
             $bindings->addBinding_printSearchUserForm(false);

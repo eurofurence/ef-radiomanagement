@@ -388,13 +388,23 @@ class bindings {
      * This function selects a device to bind, based on the search or the DID-Override
      *
      * @param $searchString Search-String from searchDeviceForm
+     * @param $deviceIdOverride Absolute Device-ID
      */
-    public function addBinding_selectDevice($searchString) {
+    public function addBinding_selectDevice($searchString, $deviceIdOverride) {
         //Gain devices access
         $devices = new Devices();
 
         //Search for devices
-        $searchedDevices = $devices->searchDevices($searchString);
+        $searchedDevices = $devices->searchDevices($searchString, $deviceIdOverride);
+
+        //Remove devices that are allready in $_SESSION["addBinding"]["devices"]
+        if(isset($_SESSION["addBinding"]["devices"])) {
+            foreach($_SESSION["addBinding"]["devices"] as $device) {
+                if($searchedDevices[$device->{"deviceid"}]) {
+                    unset($searchedDevices[$device->{"deviceid"}]);
+                }
+            }
+        }
 
         //Check if devices were found
         if(sizeof($searchedDevices)<1) { self::addBinding_printSearchDeviceForm(true); return false; }
@@ -441,7 +451,7 @@ class bindings {
         }
 
         //Only one device found, add to SESSION and print review
-        $_SESSION["addBinding"]["devices"][]=array_values($searchedDevices)[0];
+        $_SESSION["addBinding"]["devices"][array_values($searchedDevices)[0]->{"deviceid"}]=array_values($searchedDevices)[0];
         self::addBinding_printReviewForm();
 
         return true;
@@ -452,10 +462,74 @@ class bindings {
      * This function prints the review-form for device adding!
      */
     public function addBinding_printReviewForm() {
-        echo "<pre>";
-        print_r($_SESSION["addBinding"]);
-        echo "</pre>";
+        ?>
+        <span class="content_block">
+            <div class="page_subtitle">Review new binding</div>
+            <hr class="header_spacer"/>
+            <span style="margin-bottom: 2px;" class="content_block">The following bindings are about to be made to the user <b><?=$_SESSION["addBinding"]["user"]->{"nickname"}." (RID: ".$_SESSION["addBinding"]["user"]->{"regid"}." - UID: ".$_SESSION["addBinding"]["user"]->{"userid"}.")"?></b>!</span><br/>
+            <div class="devicelist_wrapper" id="devicelist_wrapper">
+                <table class="devicelist" id="devicelist_table" style="margin-left: 0px;">
+                    <tr>
+                        <td class="devicelist_head">DID</td>
+                        <td class="devicelist_head">Name (DTID)</td>
+                        <td class="devicelist_head">Callsign</td>
+                        <td class="devicelist_head">S/N</td>
+                        <td class="devicelist_head">Notes</td>
+                        <td class="devicelist_head" style="width: 14px;">&nbsp;</td>
+                    </tr>
+                    <?php
+                    //Spit out devices
+                    $row_color = "even";
+                    foreach($_SESSION["addBinding"]["devices"] as $device) {
+                        if($row_color == "even") { $row_color = "odd"; }
+                        else { $row_color = "even"; }
+                        ?>
+                        <tr class="devicelist_<?=$row_color?>">
+                            <td><?=$device->{"deviceid"}?></td>
+                            <td><?=$device->{"name"}?>&nbsp;(<?=$device->{"devicetemplateid"}?>)</td>
+                            <td><?=$device->{"callsign"}?></td>
+                            <td><?=$device->{"serialnumber"}?></td>
+                            <td><?=$device->{"notes"}?></td>
+                            <td style="text-align: center;"><a href="<?=domain?>index.php?p=add_binding&addBinding_removeDevice=<?=$device->{"deviceid"}?>" title="Remove device!"><img src="<?=domain.dir_img?>trashbin.png"/></a></td>
+                        </tr>
+                    <?php } ?>
+                </table>
+            </div>
+            <span style="margin-top: 2px; width: 100%; text-align: center; display: inline-block;"><a href="<?=domain?>index.php?p=add_binding&saveBinding=true" title="Create Binding"><img src="<?=domain.dir_img?>addBinding.png"/>&nbsp;<b>Create Binding!</b></a>&nbsp;&nbsp;-&nbsp;&nbsp;<a href="<?=domain?>index.php?p=add_binding&addBinding_additionalDevice=true" title="Add another device">Add another device!</a></span><br/>
+        </span><br/>
+        <?php
         return true;
+    }
+
+    /* addBinding_saveBindings()
+     *
+     * This function saves all in $_SESSION["addBinding"] defined bindings
+     *
+     * @return TRUE Success, all bindings saved
+     * @return FALSE Error, devices aren't available anymore :(
+     */
+    public function addBinding_saveBindings() {
+        //Check if devices are to be bound
+        if(!isset($_SESSION["addBinding"]["user"]) || !isset($_SESSION["addBinding"]["devices"])) {
+            return false;
+        }
+
+        //TODO: Stopped here
+        //TODO: Check device availability before creating binding
+        return true;
+    }
+
+    /* addBinding_saveBindingsCatch()
+     *
+     * This function interprets the result of addBinding_saveBindings()
+     */
+    public function addBinding_saveBindingsCatch() {
+        //Tries to save current bindings
+        if(self::addBinding_saveBindings()) {
+            echo "Success";
+        } else {
+            echo "Error!";
+        }
     }
 }
 

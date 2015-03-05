@@ -456,21 +456,31 @@ class devices {
      * them in an array
      *
      * @param $searchValue The desired search-string
+     * @param $deviceIdOverride Absolute Device-ID
      */
-    public function searchDevices($searchValue) {
+    public function searchDevices($searchValue, $deviceIdOverride) {
         //Check input
-        if(!$searchValue) { return false; }
+        if(!$searchValue && !$deviceIdOverride) { return false; }
 
         //Gain db access
         global $db;
 
         //Query all registered devices
-        $query_devices = $db->query("
+        if($deviceIdOverride) {
+            $query_devices = $db->query("
+            SELECT  devices.*, devicetemplates.`name`
+            FROM `devices` devices, `devicetemplates` devicetemplates
+            WHERE devices.`devicetemplateid` = devicetemplates.`devicetemplateid`
+            AND `deviceid`='".$db->escape($deviceIdOverride)."'
+            ORDER BY `name` ASC, `callsign` ASC, `deviceid` ASC");
+        } else {
+            $query_devices = $db->query("
             SELECT  devices.*, devicetemplates.`name`
             FROM `devices` devices, `devicetemplates` devicetemplates
             WHERE devices.`devicetemplateid` = devicetemplates.`devicetemplateid`
             AND (`callsign`='".$db->escape($searchValue)."' OR `deviceid`='".$db->escape($searchValue)."' OR `name` LIKE '%".$db->escape($searchValue)."%')
             ORDER BY `name` ASC, `callsign` ASC, `deviceid` ASC");
+        }
         if($db->isError()) { die($db->isError()); }
 
         //Querry database for bindings
@@ -485,7 +495,7 @@ class devices {
         $outputDevices = array();
         while($row = mysqli_fetch_object($query_devices)) {
             if(!in_array($row->{"deviceid"}, $boundDevices)) {
-                $outputDevices[] = $row;
+                $outputDevices[$row->{"deviceid"}] = $row;
             }
         }
 
