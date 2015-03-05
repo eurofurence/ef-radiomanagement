@@ -125,7 +125,6 @@ class bindings {
      * @param $search_value The value to search for
      */
     public function generateBindingsList($search_field, $search_value) {
-        //FIXME: Implment serach function
         //Gain db access
         global $db;
 
@@ -225,6 +224,41 @@ class bindings {
             }
         }
         ?></table></div><?php
+    }
+
+    /* deleteBindingFormSubmitted()
+     *
+     * This function checks if the deleteBindingForm was submitted
+     *
+     * @return TRUE Form was submitted
+     * @return FALSE Form was NOT submitted
+     */
+    public function deleteBindingFormSubmitted() {
+        if($_POST["deleteBindingForm_submitted"]=="true") { return true; }
+        return false;
+    }
+
+    /* deleteBinding()
+     *
+     * This function deletes a binding from the database
+     *
+     * @param $bindingid The desired binding's ID
+     *
+     * @return TRUE Success
+     * @return FALSE Error
+     */
+    public function deleteBinding($bindingid) {
+        //Check input
+        if(!$bindingid || !is_numeric($bindingid)) { return false; }
+
+        //Gain db access
+        global $db;
+
+        //Delete binding from database
+        $db->query("DELETE FROM `bindings` WHERE `bindingid`='".$db->escape($bindingid)."' LIMIT 1");
+        if($db->isError()) { die($db->isError()); }
+
+        return true;
     }
 
     /* addBinding_printSearchUserForm()
