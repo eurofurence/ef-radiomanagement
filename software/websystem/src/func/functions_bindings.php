@@ -240,7 +240,6 @@ class bindings {
         <div class="page_subtitle">Search for User</div>
         <hr class="header_spacer"/>
         <span class="content_block">Please scan or enter the desired users Registration-ID or Nickname!</span><br/>
-            <br/>
             <table>
                 <tr>
                     <td style="vertical-align: middle;"><img src="<?=domain.dir_img?>usercard.png"/></td>
@@ -308,7 +307,7 @@ class bindings {
                     <td class="gptable_head">UID</td>
                     <td class="gptable_head">RID</td>
                     <td class="gptable_head">Nickname</td>
-                    <td class="gptable_head">&nbsp;</td>
+                    <td class="gptable_head" style="width: 14px;">&nbsp;</td>
                 </tr>
                 <?php
                 //Spit out devices
@@ -321,7 +320,7 @@ class bindings {
                         <td><?=$user->{"userid"}?></td>
                         <td><?=$user->{"regid"}?></td>
                         <td><?=$user->{"nickname"}?></td>
-                        <td><a href="<?=domain?>index.php?p=add_binding&searchUser_userid=<?=$user->{"userid"}?>" title="Select User"><img src="<?=domain.dir_img?>check.png"/></a></td>
+                        <td style="text-align: center;"><a href="<?=domain?>index.php?p=add_binding&searchUser_userid=<?=$user->{"userid"}?>" title="Select User"><img src="<?=domain.dir_img?>check.png"/></a></td>
                     </tr>
                 <?php
                 }
@@ -357,8 +356,8 @@ class bindings {
                     <td style="vertical-align: middle;">
                         <form method="POST" action="<?=domain?>index.php?p=add_binding" name="addBinding_searchDeviceForm">
                             <span style="font-size: 12px;">Callsign, Name or DID</span><br/>
+                            <?php if($deviceNotFound) { ?><span style="font-size: 12px;"><b style="color: #EE0000;">Error, no device was found!</b></span><br/><?php } ?>
                             <input type="hidden" name="addBinding_searchDeviceForm_submitted" value="true" />
-                            <?php if($deviceNotFound) { ?><b style="color: #EE0000;">Error, no device was found!</b><?php } ?>
                             <input type="text" name="addBinding_searchDeviceForm_searchString" style="width: 225px;" value="" placeholder="Enter or scan search value!" size="30" autocomplete="off" required autofocus/><br/>
                             <input style="float: right; margin-top: 3px;" type="submit" value="Serach"/>
                         </form>
@@ -389,10 +388,74 @@ class bindings {
      * This function selects a device to bind, based on the search or the DID-Override
      *
      * @param $searchString Search-String from searchDeviceForm
-     * @param $deviceIdOverride DID of device to force-search for (Ignores $searchString)
      */
-    public function addBinding_selectDevice($searchString, $deviceIdOverride) {
-        //TODO: STOPPED HERE
+    public function addBinding_selectDevice($searchString) {
+        //Gain devices access
+        $devices = new Devices();
+
+        //Search for devices
+        $searchedDevices = $devices->searchDevices($searchString);
+
+        //Check if devices were found
+        if(sizeof($searchedDevices)<1) { self::addBinding_printSearchDeviceForm(true); return false; }
+
+        //Check if multiple devices were found
+        if(sizeof($searchedDevices)>1) {
+            //Print selection table
+            ?>
+            <span class="content_block">
+            <div class="page_subtitle">Search for Device</div>
+            <hr class="header_spacer"/>
+            <div style="margin-bottom: 2px;">Multiple devices are matching your search. Please select one from below!</div>
+            <div class="devicelist_wrapper" id="devicelist_wrapper">
+                <table class="devicelist" id="devicelist_table" style="margin-left: 0px;">
+                    <tr>
+                        <td class="devicelist_head">DID</td>
+                        <td class="devicelist_head">Name (DTID)</td>
+                        <td class="devicelist_head">Callsign</td>
+                        <td class="devicelist_head">S/N</td>
+                        <td class="devicelist_head">Notes</td>
+                        <td class="devicelist_head" style="width: 14px;">&nbsp;</td>
+                    </tr>
+                    <?php
+
+                    //Spit out devices
+                    $row_color = "even";
+                    foreach($searchedDevices as $device) {
+                        if($row_color == "even") { $row_color = "odd"; }
+                        else { $row_color = "even"; }
+                        ?>
+                        <tr class="devicelist_<?=$row_color?>">
+                            <td><?=$device->{"deviceid"}?></td>
+                            <td><?=$device->{"name"}?>&nbsp;(<?=$device->{"devicetemplateid"}?>)</td>
+                            <td><?=$device->{"callsign"}?></td>
+                            <td><?=$device->{"serialnumber"}?></td>
+                            <td><?=$device->{"notes"}?></td>
+                            <td style="text-align: center;"><a href="<?=domain?>index.php?p=add_binding&searchDevice_deviceid=<?=$device->{"deviceid"}?>" title="Select device!"><img src="<?=domain.dir_img?>check.png"/></a></td>
+                        </tr>
+                    <?php
+                    }
+                ?></table></div><i>DID: DeviceID</i>&nbsp;&nbsp;-&nbsp;&nbsp;<i>DTID: DevicetemplateID</i><br/><?php
+
+            return false;
+        }
+
+        //Only one device found, add to SESSION and print review
+        $_SESSION["addBinding"]["devices"][]=array_values($searchedDevices)[0];
+        self::addBinding_printReviewForm();
+
+        return true;
+    }
+
+    /* addBinding_printReviewForm()
+     *
+     * This function prints the review-form for device adding!
+     */
+    public function addBinding_printReviewForm() {
+        echo "<pre>";
+        print_r($_SESSION["addBinding"]);
+        echo "</pre>";
+        return true;
     }
 }
 

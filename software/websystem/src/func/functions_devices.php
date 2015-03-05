@@ -450,4 +450,46 @@ class devices {
         return true;
     }
 
+    /* searchDevices()
+     *
+     * This function searches for devices and returns
+     * them in an array
+     *
+     * @param $searchValue The desired search-string
+     */
+    public function searchDevices($searchValue) {
+        //Check input
+        if(!$searchValue) { return false; }
+
+        //Gain db access
+        global $db;
+
+        //Query all registered devices
+        $query_devices = $db->query("
+            SELECT  devices.*, devicetemplates.`name`
+            FROM `devices` devices, `devicetemplates` devicetemplates
+            WHERE devices.`devicetemplateid` = devicetemplates.`devicetemplateid`
+            AND (`callsign`='".$db->escape($searchValue)."' OR `deviceid`='".$db->escape($searchValue)."' OR `name` LIKE '%".$db->escape($searchValue)."%')
+            ORDER BY `name` ASC, `callsign` ASC, `deviceid` ASC");
+        if($db->isError()) { die($db->isError()); }
+
+        //Querry database for bindings
+        $query_bindings = $db->query("SELECT `deviceid` FROM `bindings`");
+        if($db->isError()) { die($db->isError()); }
+
+        //Generate array of bound devices
+        $boundDevices = array();
+        while($row = mysqli_fetch_object($query_bindings)) { $boundDevices[] = $row->{"deviceid"}; }
+
+        //Generate output data array of only available devices
+        $outputDevices = array();
+        while($row = mysqli_fetch_object($query_devices)) {
+            if(!in_array($row->{"deviceid"}, $boundDevices)) {
+                $outputDevices[] = $row;
+            }
+        }
+
+        return $outputDevices;
+    }
+
 }
