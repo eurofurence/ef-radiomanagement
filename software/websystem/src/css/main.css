@@ -1,9 +1,37 @@
+/* ##### Dynamic Font-Sizes ##### */
+@media (min-width: 400px) { /* 400px - 9999px */
+    div.page_title { font-size: 35px; }
+    table.content_wrapper { font-size: 12px; }
+    table.gptable { font-size: 11pt; }
+    div.index_big_button { font-size: 30px; }
+}
+
+@media (max-width: 400px) { /* 350px - 400px */
+    div.page_title { font-size: 9vw; }
+    table.content_wrapper { font-size: 3vw; }
+    table.gptable { font-size: 3.5vw; }
+    div.index_big_button { font-size: 9vw; }
+}
+
+@media (max-width: 350px) { /* 300px - 350px */
+    div.page_title { font-size: 11vw; }
+    table.content_wrapper { font-size: 3.5vw; }
+    table.gptable { font-size: 4vw; }
+    div.index_big_button { font-size: 11vw; }
+}
+
+@media (max-width: 300px) { /* 0px - 300px */
+    div.page_title { font-size: 11vw; }
+    table.content_wrapper { font-size: 4vw; }
+    table.gptable { font-size: 4.5vw; }
+    div.index_big_button { font-size: 11vw; }
+}
+
 /* ##### General Styles ##### */
 body {
     background-color: #FFFFFF;
     margin: 0px 0px 0px 0px;
     font-family: Verdana, Geneva, sans-serif;
-    font-size: 12px;
 }
 
 div.title {
@@ -21,7 +49,6 @@ img.titleBanner {
 
 div.page_title {
     color: #666666;
-    font-size: 35px;
     font-weight: bold;
 }
 
@@ -36,7 +63,6 @@ table.content_wrapper {
     min-width: 100%;
     margin: 0px;
     border-collapse: collapse;
-    font-size: 12px;
 }
 
 table.content_wrapper td {
@@ -80,8 +106,6 @@ table.gptable {
     margin-left: auto;
     margin-right: auto;
     border-collapse: collapse;
-    min-width: 250px;
-    font-size: 11pt;
     border: 1px solid #006357;
 }
 
@@ -183,14 +207,11 @@ span.index_buttons {
 }
 
 div.index_big_button {
-
-
     background-color: rgba(0, 99, 87, 0.20);
 
     text-align: center;
     vertical-align: middle;
     color: #666666;
-    font-size: 30px;
     font-weight: bold;
 
     -webkit-border-radius: 20px;
@@ -251,7 +272,6 @@ div.login_error {
 
 /* ##### Callsignlist styles ##### */
 div.callsignlist_wrapper {
-    min-width: 300px;
     width: 100%;
     text-align: center;
 }
