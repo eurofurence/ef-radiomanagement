@@ -8,11 +8,15 @@ body {
 
 div.title {
     background-color: #006357;
-    min-width: 350px;
     width: 100%;
-    height: 150px;
     margin-top: 20px;
     text-align: center;
+}
+
+img.titleBanner {
+    max-width: 90vw;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 div.page_title {
@@ -61,7 +65,7 @@ hr.header_spacer {
 
 span.content_block {
     display: inline-block;
-    min-width: 300px;
+    min-width: 200px;
     max-width: 900px;
     vertical-align: top;
     text-align: left;
@@ -153,32 +157,35 @@ ul.navi_linkcontainer {
 
 
 /* ##### index-Styes ##### */
-div.index_buttons {
-    width: 100%;
-    text-align: center;
-}
-
-@media (max-device-width: 450px) {
-    span.index_big_button {
-        width: 300px;
-        height: 300px;
-        line-height: 300px;
+@media (max-width: 300px) {
+    span.index_buttons {
+        height: 40vw;
     }
 }
 
-@media (min-device-width: 450px) {
-    span.index_big_button {
-        width: 400px;
-        height: 400px;
-        line-height: 400px;
+@media (min-width: 300px) {
+    span.index_buttons {
+        height: 80vw;
     }
 }
 
-span.index_big_button {
+span.index_buttons {
     display: inline-block;
 
-    background-color: rgba(0, 99, 87, 0.20);
+    width: 80%;
+    /*height: 80vw;*/
+    max-height: 350px;
+    max-width: 350px;
+
     margin: 15px 15px 15px 15px;
+    /*margin-left: auto;
+    margin-right: auto;*/
+}
+
+div.index_big_button {
+
+
+    background-color: rgba(0, 99, 87, 0.20);
 
     text-align: center;
     vertical-align: middle;
@@ -198,12 +205,17 @@ span.index_big_button {
     transition-timing-function: ease;
 }
 
-span.index_big_button:hover {
+div.index_big_button:hover {
     background-color: rgba(0, 99, 87, 0.70);
     color: #FFFFFF;
 }
 
 a.index_big_button {
+    display: inline-block;
+
+    height: 100%;
+    width: 100%;
+
     border: none;
     text-decoration: none;
     color: #666666;
@@ -218,6 +230,12 @@ a.index_big_button {
 
 a.index_big_button:hover {
     color: #FFFFFF;
+}
+
+a.index_big_button div {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 /* ##### Login styles ##### */
