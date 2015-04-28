@@ -138,6 +138,16 @@ tr.gptable_odd:hover, tr.gptable_even:hover {
 
 
 /* ##### Navigation-Styles ##### */
+@media (min-width: 700px) {
+    .navi_big { display: table-cell; }
+    .navi_small { display: none; }
+}
+
+@media (max-width: 700px) {
+    .navi_big { display: none; }
+    .navi_small { display: inline-block; }
+}
+
 hr.navi_spacer {
     height: 1px;
     background-color: #FFFFFF;
@@ -180,7 +190,63 @@ ul.navi_linkcontainer {
     margin-left: -15px;
     margin-top: 0px;
 
+    font-size: 12px;
+
     list-style-image: url('../img/bullet.png');
+}
+
+span.navi_small {
+    width: 100%;
+    text-align: left;
+    vertical-align: middle;
+}
+
+span.navi_small_topbar {
+    display: inline-block;
+    width: 100%;
+    background-color: #006357;
+}
+
+span.navi_small_topbar img {
+    padding: 4px 2px 2px 2px;
+}
+
+span.navi_small_menu {
+    display: inline-block;
+    width: 100%;
+
+    background-color: #006357;
+}
+
+img.navi_small_title {
+    max-height: 30px;
+}
+
+a.navi_small_opener {
+    float: right;
+}
+
+a.navi_small_opener img {
+    padding: 6px 4px 4px 4px;
+}
+
+span.navi_small ul {
+    display: none;
+    width: 100%;
+    padding: 0px 0px 5px 0px;
+    margin: 0px;
+    text-align: center;
+}
+
+span.navi_small:hover ul {
+    display: block;
+}
+
+span.navi_small li {
+    width: 100%;
+
+    list-style-image: none;
+    list-style-type: none;
 }
 
 
