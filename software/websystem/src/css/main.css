@@ -34,12 +34,16 @@ body {
     font-family: Verdana, Geneva, sans-serif;
 }
 
+
 div.title {
     background-color: #006357;
     width: 100%;
-    margin-top: 20px;
     text-align: center;
 }
+@media (min-width: 400px) { div.title { margin-top: 20px; } }
+@media (max-width: 400px) { div.title { margin-top: 15px; } }
+@media (max-width: 300px) { div.title { margin-top: 10px; } }
+@media (max-width: 250px) { div.title { margin-top: 7px; } }
 
 img.titleBanner {
     max-width: 90vw;
@@ -184,12 +188,14 @@ ul.navi_linkcontainer {
 @media (max-width: 300px) {
     span.index_buttons {
         height: 40vw;
+        margin: 8px 8px 8px 8px;
     }
 }
 
 @media (min-width: 300px) {
     span.index_buttons {
         height: 80vw;
+        margin: 15px 15px 15px 15px;
     }
 }
 
@@ -201,7 +207,6 @@ span.index_buttons {
     max-height: 350px;
     max-width: 350px;
 
-    margin: 15px 15px 15px 15px;
     /*margin-left: auto;
     margin-right: auto;*/
 }
@@ -260,6 +265,19 @@ a.index_big_button div {
 }
 
 /* ##### Login styles ##### */
+@media (max-width: 350px) {
+    div.login_data_box_small { display: inline-block; }
+    div.login_data_box_big { display: none; }
+}
+
+@media (min-width: 350px) {
+    div.login_data_box_small { display: none; }
+    div.login_data_box_big { display: inline-block; }
+}
+
+div.login_data_box_big { text-align: center; }
+div.login_data_box_small { text-align: left; }
+
 div.login_content_container {
     width: 100%;
     text-align: center;

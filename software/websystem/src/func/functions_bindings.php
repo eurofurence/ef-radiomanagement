@@ -38,7 +38,7 @@ class bindings {
         <table class="gptable">
             <tr>
                 <td class="gptable_head">Nickname</td>
-                <td class="gptable_head">Callsign</td>
+                <td class="gptable_head">CS</td>
             </tr>
         <?php
         //Generate data rows

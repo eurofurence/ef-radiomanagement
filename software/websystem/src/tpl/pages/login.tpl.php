@@ -16,16 +16,17 @@
         require_once(basetpl_header);
         ?>
         <td class="content_td">
-            <div class="title"><a href="<?=domain?>"><img src="<?=domain.dir_img?>title.jpg"/></a></div>
+            <div class="title"><a href="<?=domain?>"><img class="titleBanner" src="<?=domain.dir_img?>title.jpg"/></a></div>
             <br/>
             <div class="login_content_container">
                 <div class="page_title">System Login</div>
                 <br/>
-                <div class="login_data_box" style="display: inline-block; text-align: center;">
+                <!-- Login for big screen devices -->
+                <div class="login_data_box_big">
                     <?php
-                        //Check for login errors
-                        if($sessions->error_login_not_found) { ?><div class="login_error">Combination not found in database!</div><?php }
-                        if($sessions->error_login_data_not_entered) { ?><div class="login_error">Please enter Nickname and Reg-ID!</div><?php }
+                    //Check for login errors
+                    if($sessions->error_login_not_found) { ?><div class="login_error">Combination not found in database!</div><?php }
+                    if($sessions->error_login_data_not_entered) { ?><div class="login_error">Please enter Nickname and Reg-ID!</div><?php }
                     ?>
                     <form method="POST" action="index.php?p=login">
                         <input type="hidden" name="loginform_submitted" value="true"/>
@@ -50,8 +51,26 @@
                             </tr>
                         </table>
                     </form>
-                    Hint: A password is only required for admin-functionalities!
                 </div>
+                <!-- Login for small-screen devices -->
+                <div class="login_data_box_small">
+                    <?php
+                    //Check for login errors
+                    if($sessions->error_login_not_found) { ?><div class="login_error">Combination not found in database!</div><?php }
+                    if($sessions->error_login_data_not_entered) { ?><div class="login_error">Please enter Nickname and Reg-ID!</div><?php }
+                    ?>
+                    <form method="POST" action="index.php?p=login">
+                        <input type="hidden" name="loginform_submitted" value="true"/>
+                            <span>Nickname</span><br/>
+                            <input type="text" name="loginform_nickname" placeholder="Randomfur" value="<?=$_POST["loginform_nickname"]?>" style="width: 200px;" required/><br/>
+                            <span>Reg-ID</span><br/>
+                            <input type="text" name="loginform_regid" placeholder="1234" value="<?=$_POST["loginform_regid"]?>" style="width: 50px;" required/><br/>
+                            <span>Password (Opt.)</span><br/>
+                            <input type="password" name="loginform_password" placeholder="************" style="width: 200px;"/><br/>
+                            <div style="width: 100%; text-align: right; margin-top: 4px;"><a style="font-size: 12px;" href="<?=domain?>">Back</a>&nbsp;&nbsp;<input type="submit" value="Login" style="border: 1px solid #006357; width: 60px;"/></div>
+                    </form>
+                </div>
+                <br/><span>Hint: A password is only required for admin-functionalities!</span>
             </div>
         </td>
         <?php
