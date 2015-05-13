@@ -1,0 +1,37 @@
+/* ##### Font-Sizes ##### */
+div.page_title { font-size: 18px; padding-top: -2px; padding-bottom: -2px; }
+table.content_wrapper { font-size: 3vw; }
+table.gptable { font-size: 3.5vw; }
+div.index_big_button { font-size: 9vw; }
+
+/* ##### Global ##### */
+
+/* ##### Public Areas ##### */
+div.title {
+    width: 250px;
+}
+
+img.titleBanner {
+    max-width: 220px;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+/* ##### Pub: Index ##### */
+span.index_buttons {
+    padding-top: 5px;
+}
+
+span.index_buttons, a.index_big_button, div.index_big_button {
+    height: 70px;
+    width: 80px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+a.index_big_button div { position: relative; top: 27px; }
+
+/* ##### Pub: Callsigns ##### */
+table.callsignlist {
+    min-width: 220px;
+}

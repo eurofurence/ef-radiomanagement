@@ -35,7 +35,7 @@ class bindings {
         ?>
         If you find an invalid callsing please contact the radio-team!<br/>
         <br/>
-        <table class="gptable">
+        <table class="gptable callsignlist">
             <tr>
                 <td class="gptable_head">Nickname</td>
                 <td class="gptable_head">CS</td>
