@@ -222,6 +222,10 @@ img.navi_small_title {
     max-height: 30px;
 }
 
+img.navi_small_title_text {
+    max-width: 55%;
+}
+
 a.navi_small_opener {
     float: right;
 }

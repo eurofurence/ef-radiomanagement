@@ -35,3 +35,10 @@ a.index_big_button div { position: relative; top: 27px; }
 table.callsignlist {
     min-width: 220px;
 }
+
+/* ##### Navigation ##### */
+span.navi_small { width: 250px; }
+
+img.navi_small_title_text { width: 150px; }
+
+a.navi_small_logo { float: left; }

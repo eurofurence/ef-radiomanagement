@@ -23,9 +23,9 @@
 <!-- Small navi at the top -->
 <span class="navi_small">
     <span class="navi_small_topbar">
-        <a href="<?=domain?>">
+        <a class="navi_small_logo" href="<?=domain?>">
             <img class="navi_small_title" src="<?=domain.dir_img?>title_split_logo.jpg"/>
-            <img style="max-width: 55%;" class="navi_small_title" src="<?=domain.dir_img?>title_split_text.jpg"/>
+            <img class="navi_small_title navi_small_title_text" src="<?=domain.dir_img?>title_split_text.jpg"/>
         </a>
         <a class="navi_small_opener" style="color:#ffffff;" href="#"><img src="<?=domain.dir_img?>menu.png"/></a><br/>
     </span>
