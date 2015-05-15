@@ -35,7 +35,7 @@ class bindings {
         ?>
         If you find an invalid callsing please contact the radio-team!<br/>
         <br/>
-        <table class="gptable callsignlist">
+        <table class="gptable pocketpc_fill">
             <tr>
                 <td class="gptable_head">Nickname</td>
                 <td class="gptable_head">CS</td>
@@ -280,14 +280,14 @@ class bindings {
         <span class="content_block">Please scan or enter the desired users Registration-ID or Nickname!</span><br/>
             <table>
                 <tr>
-                    <td style="vertical-align: middle;"><img src="<?=domain.dir_img?>usercard.png"/></td>
+                    <td style="vertical-align: middle;"><img class="addBinding" src="<?=domain.dir_img?>usercard.png"/></td>
                     <td>&nbsp;&nbsp;</td>
                     <td style="vertical-align: middle;">
                         <form method="POST" action="<?=domain?>index.php?p=add_binding" name="addBinding_searchUserForm">
                             <span style="font-size: 12px;">Reg-ID / Nickname</span><br/>
-                            <?php if($userNotFound) { ?><span style="font-size: 12px;"><b style="color: #EE0000;">Error, no user was found!</b></span><br/><?php } ?>
+                            <?php if($userNotFound) { ?><span class="addBindingError"><b style="color: #EE0000;">Error, no user was found!</b></span><br/><?php } ?>
                             <input type="hidden" name="addBinding_searchUserForm_submitted" value="true" />
-                            <input type="text" name="addBinding_searchUserForm_searchString" style="width: 225px;" value="" placeholder="Enter or scan ID or nick!" size="30" autocomplete="off" required autofocus/><br/>
+                            <input type="text" name="addBinding_searchUserForm_searchString" class="addBinding" value="" placeholder="Enter or scan ID or nick!" size="30" autocomplete="off" required autofocus/><br/>
                             <input style="float: right; margin-top: 3px;" type="submit" value="Serach"/>
                         </form>
                     </td>
@@ -340,7 +340,7 @@ class bindings {
             <hr class="header_spacer"/>
             <div style="margin-bottom: 2px;">Multiple users are matching your search. Please select one from below!</div>
             <div class="userlist_wrapper" id="userlist_wrapper">
-            <table class="gptable" style="margin-left: 0px;">
+            <table class="gptable pocketpc_fill" style="margin-left: 0px;">
                 <tr>
                     <td class="gptable_head">UID</td>
                     <td class="gptable_head">RID</td>
@@ -358,7 +358,7 @@ class bindings {
                         <td><?=$user->{"userid"}?></td>
                         <td><?=$user->{"regid"}?></td>
                         <td><?=$user->{"nickname"}?></td>
-                        <td style="text-align: center;"><a href="<?=domain?>index.php?p=add_binding&searchUser_userid=<?=$user->{"userid"}?>" title="Select User"><img src="<?=domain.dir_img?>check.png"/></a></td>
+                        <td style="vertical-align: middle; text-align: center;"><a href="<?=domain?>index.php?p=add_binding&searchUser_userid=<?=$user->{"userid"}?>" title="Select User"><img src="<?=domain.dir_img?>check.png"/></a></td>
                     </tr>
                 <?php
                 }
@@ -389,21 +389,21 @@ class bindings {
             <br/>
             <table>
                 <tr>
-                    <td style="vertical-align: middle;"><img src="<?=domain.dir_img?>barcode_scan.png"/></td>
+                    <td style="vertical-align: middle;"><img class="addBinding" src="<?=domain.dir_img?>barcode_scan.png"/></td>
                     <td>&nbsp;&nbsp;</td>
                     <td style="vertical-align: middle;">
                         <form method="POST" action="<?=domain?>index.php?p=add_binding" name="addBinding_searchDeviceForm">
                             <span style="font-size: 12px;">Callsign, Name or DID</span><br/>
-                            <?php if($deviceNotFound) { ?><span style="font-size: 12px;"><b style="color: #EE0000;">Error, no device was found!</b></span><br/><?php } ?>
+                            <?php if($deviceNotFound) { ?><span class="addBindingError"><b style="color: #EE0000;">Error, no device was found!</b></span><br/><?php } ?>
                             <input type="hidden" name="addBinding_searchDeviceForm_submitted" value="true" />
-                            <input type="text" name="addBinding_searchDeviceForm_searchString" style="width: 225px;" value="" placeholder="Enter or scan search value!" size="30" autocomplete="off" required autofocus/><br/>
+                            <input type="text" name="addBinding_searchDeviceForm_searchString" class="addBinding" value="" placeholder="Enter or scan search value!" size="30" autocomplete="off" required autofocus/><br/>
                             <input style="float: right; margin-top: 3px;" type="submit" value="Serach"/>
                         </form>
                     </td>
                 </tr>
             </table>
-        </span><br/><br/>
-        <b>Selected user:</b>&nbsp;<?=$_SESSION["addBinding"]["user"]->{"nickname"}." (RID: ".$_SESSION["addBinding"]["user"]->{"regid"}." - UID: ".$_SESSION["addBinding"]["user"]->{"userid"}.")"?> - <a href="<?domain?>index.php?p=add_binding">Cancel</a>
+        </span><br/><br class="removeOnPocketPc"/>
+        <b>Selected user:</b>&nbsp;<br class="onlyPocketPc"/><?=$_SESSION["addBinding"]["user"]->{"nickname"}." (RID: ".$_SESSION["addBinding"]["user"]->{"regid"}." - UID: ".$_SESSION["addBinding"]["user"]->{"userid"}.")"?> - <a href="<?domain?>index.php?p=add_binding">Cancel</a>
         <?php
 
         return true;
@@ -460,9 +460,9 @@ class bindings {
                     <tr>
                         <td class="devicelist_head">DID</td>
                         <td class="devicelist_head">Name (DTID)</td>
-                        <td class="devicelist_head">Callsign</td>
-                        <td class="devicelist_head">S/N</td>
-                        <td class="devicelist_head">Notes</td>
+                        <td class="devicelist_head">CS</td>
+                        <td class="devicelist_head removeOnPocketPc">S/N</td>
+                        <td class="devicelist_head removeOnPocketPc">Notes</td>
                         <td class="devicelist_head" style="width: 14px;">&nbsp;</td>
                     </tr>
                     <?php
@@ -475,15 +475,15 @@ class bindings {
                         ?>
                         <tr class="devicelist_<?=$row_color?>">
                             <td><?=$device->{"deviceid"}?></td>
-                            <td><?=$device->{"name"}?>&nbsp;(<?=$device->{"devicetemplateid"}?>)</td>
+                            <td class="pocketPcBreakWord"><?=$device->{"name"}?>&nbsp;(<?=$device->{"devicetemplateid"}?>)</td>
                             <td><?=$device->{"callsign"}?></td>
-                            <td><?=$device->{"serialnumber"}?></td>
-                            <td><?=$device->{"notes"}?></td>
-                            <td style="text-align: center;"><a href="<?=domain?>index.php?p=add_binding&searchDevice_deviceid=<?=$device->{"deviceid"}?>" title="Select device!"><img src="<?=domain.dir_img?>check.png"/></a></td>
+                            <td class="removeOnPocketPc"><?=$device->{"serialnumber"}?></td>
+                            <td class="removeOnPocketPc"><?=$device->{"notes"}?></td>
+                            <td style="vertical-align: middle; text-align: center;"><a href="<?=domain?>index.php?p=add_binding&searchDevice_deviceid=<?=$device->{"deviceid"}?>" title="Select device!"><img src="<?=domain.dir_img?>check.png"/></a></td>
                         </tr>
                     <?php
                     }
-                ?></table></div><i>DID: DeviceID</i>&nbsp;&nbsp;-&nbsp;&nbsp;<i>DTID: DevicetemplateID</i><br/><?php
+                ?></table></div><i>DID: DeviceID</i>&nbsp;&nbsp;-&nbsp;&nbsp;<i>DTID: DevicetemplateID</i>&nbsp;&nbsp;-&nbsp;&nbsp;<i>CS: Callsign</i><br/><?php
 
             return false;
         }
@@ -510,9 +510,9 @@ class bindings {
                     <tr>
                         <td class="devicelist_head">DID</td>
                         <td class="devicelist_head">Name (DTID)</td>
-                        <td class="devicelist_head">Callsign</td>
-                        <td class="devicelist_head">S/N</td>
-                        <td class="devicelist_head">Notes</td>
+                        <td class="devicelist_head">CS</td>
+                        <td class="devicelist_head removeOnPocketPc">S/N</td>
+                        <td class="devicelist_head removeOnPocketPc">Notes</td>
                         <td class="devicelist_head" style="width: 14px;">&nbsp;</td>
                     </tr>
                     <?php
@@ -526,9 +526,9 @@ class bindings {
                             <td><?=$device->{"deviceid"}?></td>
                             <td><?=$device->{"name"}?>&nbsp;(<?=$device->{"devicetemplateid"}?>)</td>
                             <td><?=$device->{"callsign"}?></td>
-                            <td><?=$device->{"serialnumber"}?></td>
-                            <td><?=$device->{"notes"}?></td>
-                            <td style="text-align: center;"><a href="<?=domain?>index.php?p=add_binding&addBinding_removeDevice=<?=$device->{"deviceid"}?>" title="Remove device!"><img src="<?=domain.dir_img?>trashbin.png"/></a></td>
+                            <td class="removeOnPocketPc"><?=$device->{"serialnumber"}?></td>
+                            <td class="removeOnPocketPc"><?=$device->{"notes"}?></td>
+                            <td style="vertical-align: middle; text-align: center;"><a href="<?=domain?>index.php?p=add_binding&addBinding_removeDevice=<?=$device->{"deviceid"}?>" title="Remove device!"><img src="<?=domain.dir_img?>trashbin.png"/></a></td>
                         </tr>
                     <?php } ?>
                 </table>

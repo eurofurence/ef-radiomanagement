@@ -34,6 +34,7 @@ body {
     font-family: Verdana, Geneva, sans-serif;
 }
 
+.onlyPocketPC { display: none; } /* Disables all elements which are pocketpc exclusive */
 
 div.title {
     background-color: #006357;
@@ -146,6 +147,10 @@ tr.gptable_odd:hover, tr.gptable_even:hover {
 @media (max-width: 700px) {
     .navi_big { display: none; }
     .navi_small { display: inline-block; }
+}
+
+td.navi_spacer_pocketpc {
+    display: none;
 }
 
 hr.navi_spacer {
@@ -417,3 +422,9 @@ div.bindinglist_wrapper {
     overflow: auto;
     resize: both;
 }
+
+input.addBinding {
+    width: 225px;
+}
+
+span.addBindingError { font-size: 12px; }

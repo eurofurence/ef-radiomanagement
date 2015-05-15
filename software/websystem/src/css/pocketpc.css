@@ -1,14 +1,30 @@
+/***** Usable Device-Width: 247px! *****/
+
 /* ##### Font-Sizes ##### */
-div.page_title { font-size: 18px; padding-top: -2px; padding-bottom: -2px; }
+div.page_title { font-size: 20px; padding-top: -2px; padding-bottom: -2px; }
+div.page_subtitle { font-size: 16px; }
 table.content_wrapper { font-size: 3vw; }
 table.gptable { font-size: 3.5vw; }
 div.index_big_button { font-size: 9vw; }
 
 /* ##### Global ##### */
+.removeOnPocketPc { display: none; } /* Everything with this class gets invisible on PocketPC! */
+br.onlyPocketPc { display: block; } /* Restores br elements that are PocketPC exclusive */
+
+br.small {
+    line-height: 6px;
+}
+
+hr.header_spacer {
+    margin-top: 1px;
+    margin-bottom: 1px;
+    margin-right: 0px;
+    margin-left: 0px;
+}
 
 /* ##### Public Areas ##### */
 div.title {
-    width: 250px;
+    width: 247px;
 }
 
 img.titleBanner {
@@ -32,13 +48,35 @@ span.index_buttons, a.index_big_button, div.index_big_button {
 a.index_big_button div { position: relative; top: 27px; }
 
 /* ##### Pub: Callsigns ##### */
-table.callsignlist {
-    min-width: 220px;
+table.pocketpc_fill {
+    min-width: 230px;
 }
 
 /* ##### Navigation ##### */
-span.navi_small { width: 250px; }
+span.navi_small {
+    width: 247px;
+    padding-bottom: 3px;
+}
+
+td.navi_spacer_pocketpc {
+    display: block;
+    width: 3px;
+}
 
 img.navi_small_title_text { width: 150px; }
 
 a.navi_small_logo { float: left; }
+
+/* ##### Intern: Add Bindings ##### */
+img.addBinding { width: 80px; }
+input.addBinding { width: 142px; }
+span.addBindingError { font-size: 11px; }
+
+/* ##### Intern: Devicelist ##### */
+div.devicelist_wrapper {
+    width: 240px;
+    overflow: visible;
+}
+
+table.devicelist { font-size: 12px; }
+td.pocketPcBreakWord { word-wrap: break-word; }

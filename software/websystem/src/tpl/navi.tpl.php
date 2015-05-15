@@ -40,3 +40,4 @@
         ?>
     </span>
 </span>
+<td class="navi_spacer_pocketpc navi_small"></td>

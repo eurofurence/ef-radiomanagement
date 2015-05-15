@@ -13,7 +13,7 @@ $bindings = new bindings();
     <span style="display: inline-block; max-width: 600px;">
         You can add new bindings on this page. Please create the device as well as the desired user first!
     </span><br/>
-    <br/>
+    <br class="small"/>
     <?php
         //Check if GET-Override for user-selection is active
         if(!$_POST["addBinding_searchUserForm_searchString"] && $_GET["searchUser_userid"]) {
