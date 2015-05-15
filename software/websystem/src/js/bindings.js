@@ -13,6 +13,12 @@ function deleteBinding(bindingid) {
     //Set deviceid-field in form
     document.getElementById("deleteBindingForm_bindingid").value = bindingid;
 
+    //Append search parameter
+    /*var newAction = document.getElementById("deleteBindingForm").action +
+                    "&sfield=" + document.getElementById("sfield").options[document.getElementById("sfield").selectedIndex].value +
+                    "&svalue=" + document.getElementById("svalue").value;
+    document.getElementById("deleteBindingForm").action = newAction;*/
+
     //Submit Form
     document.getElementById("deleteBindingForm").submit();
 

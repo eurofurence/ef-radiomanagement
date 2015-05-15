@@ -90,10 +90,10 @@ class bindings {
         ?>
         You will find all radios and accessories assigned to you in the table below.<br/>
         <br/>
-        <table class="gptable">
+        <table class="gptable pocketpc_fill">
             <tr>
-                <td class="gptable_head">Item</td>
-                <td class="gptable_head">Assigned since</td>
+                <td class="gptable_head pocketPcBreakWord">Item</td>
+                <td class="gptable_head">Assigned</td>
                 <td class="gptable_head">BID</td>
                 <td class="gptable_head">DID</td>
             </tr>
@@ -131,96 +131,101 @@ class bindings {
         //Reset serach_field if search_value is not present
         if(!$search_value) { $search_field = false; }
 
-        //Get bindings from database
-        $query_bindings = $db->query("SELECT * FROM `bindings`");
-        if($db->isError()) { die($db->isError()); }
-        if(mysqli_num_rows($query_bindings) < 1) {
-            ?><b>There are currently no bindings!</b><?php
-            return false;
-        }
-
-        //Get user-details and generate user-array
-        $query_users = $db->query("SELECT `userid`, `nickname` FROM `users`");
-        if($db->isError()) { die($db->isError()); }
-        $users = array();
-        while($row = mysqli_fetch_object($query_users)) {
-            $users[$row->{"userid"}] = $row->{"nickname"};
-        }
-
-        //Get devices and generate device-array
-        $query_devices = $db->query("
-            SELECT devices.`deviceid`, devices.`callsign`, devicetemplates.`name`
-            FROM `devicetemplates` devicetemplates, `devices` devices
-            WHERE devices.`devicetemplateid`=devicetemplates.`devicetemplateid`
-            ORDER BY devices.`deviceid` ASC");
-        if($db->isError()) { die($db->isError()); }
-        $devices = array();
-        while($row = mysqli_fetch_object($query_devices)) {
-            $devices[$row->{"deviceid"}] = $row;
-        }
-
         //Generate serach form
         ?>
-        <form method="POST" id="bindingListSearchForm" action="<?=domain?>index.php?p=bindings" style="margin-bottom: 2px; magin-top: 5px;">
+        <form method="POST" class="searchForm" id="bindingListSearchForm" action="<?=domain?>index.php?p=bindings" style="margin-bottom: 2px; magin-top: 5px;">
             <table>
                 <tr>
-                    <td style="text-align: right; font-size: 12px;">Search:</td>
+                    <td class="removeOnPocketPc" style="text-align: right; font-size: 12px;">Search:</td>
                     <td style="text-align: left;">
-                        <select name="bindingListSearchForm_field" required>
+                        <span class="onlyPocketPC">Search:</span><br class="onlyPocketPc">
+                        <select name="bindingListSearchForm_field" id="sfield" required>
                             <option value="nickname" <?php if($search_field=="nickname") echo "selected"; ?>>Nickname</option>
                             <option value="deviceid" <?php if($search_field=="deviceid") echo "selected"; ?>>Device-ID</option>
                             <option value="callsign" <?php if($search_field=="callsign") echo "selected"; ?>>Callsign</option>
                             <option value="userid" <?php if($search_field=="userid") echo "selected"; ?>>User-ID</option>
                         </select>
-                        <input type="text" name="bindingListSearchForm_value" value="<?=$search_value?>" placeholder="String to search for" style="width: 200px;"/>
-                        <input type="submit" value="Submit"/>
+                        <input type="text" id="svalue" name="bindingListSearchForm_value" value="<?=$search_value?>" placeholder="String to search for" class="searchBindings"/>
+                        <input class="searchBindings_submit" type="submit" value="Submit"/>
                     </td>
                 </tr>
             </table>
         </form>
         <?php
 
-        //Generate output table
-        ?>
-        <div class="bindinglist_wrapper" id="bindinglist_wrapper">
-        <table class="gptable">
-            <tr>
-                <td class="gptable_head">BID</td>
-                <td class="gptable_head">User</td>
-                <td class="gptable_head">Device</td>
-                <td class="gptable_head">CS</td>
-                <td class="gptable_head">Bound Since</td>
-                <td class="gptable_head">Bound By</td>
-                <td class="gptable_head"></td>
-            </tr>
-        <?php
-        $row_color = "even";
-        while($row = mysqli_fetch_object($query_bindings)) {
-            //Calculate row-color
-            if($row_color == "even") { $row_color = "odd"; }
-            else { $row_color = "even"; }
-
-            //Check if search-parsing is required
-            $outputRow = true;
-            switch($search_field) {
-                case "nickname": if(strpos($users[$row->{"userid"}], $search_value) === false) { $outputRow = false; } break;
-                case "deviceid": if(strpos($row->{"deviceid"}, $search_value) === false) { $outputRow = false; } break;
-                case "callsign": if(strpos($devices[$row->{"deviceid"}]->{"callsign"}, $search_value) === false) { $outputRow = false; } break;
-                case "userid": if(strpos($row->{"userid"}, $search_value) === false) { $outputRow = false; } break;
+        //Remove default list 4 pocket PC (Only visible after search)
+        if(!(pocketPc && !$search_field && !$search_value)) {
+            //Get bindings from database
+            $query_bindings = $db->query("SELECT * FROM `bindings`");
+            if($db->isError()) { die($db->isError()); }
+            if(mysqli_num_rows($query_bindings) < 1) {
+                ?><b>There are currently no bindings!</b><?php
+                return false;
             }
 
-            if($outputRow) {
-                ?>
-                <tr class="gptable_<?=$row_color?>">
-                    <td><?=$row->{"bindingid"}?></td>
-                    <td><?=$users[$row->{"userid"}]?> (<?=$row->{"userid"}?>)</td>
-                    <td><?=$devices[$row->{"deviceid"}]->{"name"}?> (<?=$row->{"deviceid"}?>)</td>
-                    <td><?=$devices[$row->{"deviceid"}]->{"callsign"}?></td>
-                    <td><?=date("d.m.y H:i", strtotime($row->{"bound_since"}))?></td>
-                    <td><?=$users[$row->{"bound_by"}]?> (<?=$row->{"bound_by"}?>)</td>
-                    <td style="vertical-align: middle;"><a href="#" onclick="deleteBinding('<?=$row->{"bindingid"}?>')"><img src="<?=domain.dir_img?>trashbin.png"</a></td>
+            //Get user-details and generate user-array
+            $query_users = $db->query("SELECT `userid`, `nickname` FROM `users`");
+            if($db->isError()) { die($db->isError()); }
+            $users = array();
+            while($row = mysqli_fetch_object($query_users)) {
+                $users[$row->{"userid"}] = $row->{"nickname"};
+            }
+
+            //Get devices and generate device-array
+            $query_devices = $db->query("
+                SELECT devices.`deviceid`, devices.`callsign`, devicetemplates.`name`
+                FROM `devicetemplates` devicetemplates, `devices` devices
+                WHERE devices.`devicetemplateid`=devicetemplates.`devicetemplateid`
+                ORDER BY devices.`deviceid` ASC");
+            if($db->isError()) { die($db->isError()); }
+            $devices = array();
+            while($row = mysqli_fetch_object($query_devices)) {
+                $devices[$row->{"deviceid"}] = $row;
+            }
+
+
+            //Generate output table
+            ?>
+            <div class="bindinglist_wrapper" id="bindinglist_wrapper">
+            <table class="gptable">
+                <tr>
+                    <td class="gptable_head">BID</td>
+                    <td class="gptable_head">User</td>
+                    <td class="gptable_head">Device</td>
+                    <td class="gptable_head">CS</td>
+                    <td class="gptable_head">Bound Since</td>
+                    <td class="gptable_head">Bound By</td>
+                    <td class="gptable_head"></td>
                 </tr>
-                <?php
+            <?php
+            $row_color = "even";
+            while($row = mysqli_fetch_object($query_bindings)) {
+                //Calculate row-color
+                if($row_color == "even") { $row_color = "odd"; }
+                else { $row_color = "even"; }
+
+                //Check if search-parsing is required
+                $outputRow = true;
+                switch($search_field) {
+                    case "nickname": if(strpos(strtolower($users[$row->{"userid"}]), strtolower($search_value)) === false) { $outputRow = false; } break;
+                    case "deviceid": if(strpos($row->{"deviceid"}, $search_value) === false) { $outputRow = false; } break;
+                    case "callsign": if(strpos($devices[$row->{"deviceid"}]->{"callsign"}, $search_value) === false) { $outputRow = false; } break;
+                    case "userid": if(strpos($row->{"userid"}, $search_value) === false) { $outputRow = false; } break;
+                }
+
+                if($outputRow) {
+                    ?>
+                    <tr class="gptable_<?=$row_color?>">
+                        <td><?=$row->{"bindingid"}?></td>
+                        <td><?=$users[$row->{"userid"}]?> (<?=$row->{"userid"}?>)</td>
+                        <td><?=$devices[$row->{"deviceid"}]->{"name"}?> (<?=$row->{"deviceid"}?>)</td>
+                        <td><?=$devices[$row->{"deviceid"}]->{"callsign"}?></td>
+                        <td><?=date("d.m.y H:i", strtotime($row->{"bound_since"}))?></td>
+                        <td><?=$users[$row->{"bound_by"}]?> (<?=$row->{"bound_by"}?>)</td>
+                        <td style="vertical-align: middle;"><a href="#" onclick="deleteBinding('<?=$row->{"bindingid"}?>')"><img src="<?=domain.dir_img?>trashbin.png"</a></td>
+                    </tr>
+                    <?php
+                }
             }
         }
         ?></table></div><?php

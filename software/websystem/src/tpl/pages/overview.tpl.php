@@ -15,17 +15,18 @@ $bindings = new bindings();
     </span><br/>
     <br/>
 
-    <span style="display: inline-block; min-width: 300px; max-width: 600px; vertical-align: top;">
+    <span class="content_block">
         <div class="page_subtitle">Your Devices</div>
         <hr class="header_spacer"/>
         <?php $bindings->printUserBindings($sessions->getUserId()); ?>
     </span>
     <br/><br/>
-    <span style="display: inline-block; min-width: 300px; max-width: 600px; vertical-align: top;">
+    <span class="content_block">
         <div class="page_subtitle">Callsigns</div>
         <hr class="header_spacer"/>
         <?php $bindings->generateCallsignList(); ?>
     </span>
+    <br/><br/>
 </td>
 
 <?php require_once(basetpl_footer); ?>

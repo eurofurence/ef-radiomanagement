@@ -377,6 +377,8 @@ div.devicelist_wrapper {
     resize: both;
 }
 
+input.searchDevices { width: 200px; }
+
 table.devicelist {
     border-collapse: collapse;
     width: 100%;
@@ -423,8 +425,6 @@ div.bindinglist_wrapper {
     resize: both;
 }
 
-input.addBinding {
-    width: 225px;
-}
-
+input.searchBindings { width: 200px; }
+input.addBinding { width: 225px; }
 span.addBindingError { font-size: 12px; }

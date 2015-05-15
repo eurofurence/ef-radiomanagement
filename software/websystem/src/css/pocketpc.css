@@ -10,9 +10,14 @@ div.index_big_button { font-size: 9vw; }
 /* ##### Global ##### */
 .removeOnPocketPc { display: none; } /* Everything with this class gets invisible on PocketPC! */
 br.onlyPocketPc { display: block; } /* Restores br elements that are PocketPC exclusive */
+span.onlyPocketPC { display: inline-block; }
 
 br.small {
     line-height: 6px;
+}
+
+br.verysmall {
+    line-height: 2px;
 }
 
 hr.header_spacer {
@@ -33,6 +38,11 @@ img.titleBanner {
     margin-bottom: 5px;
 }
 
+/* ##### Internal Areas ##### */
+form.searchForm * {
+    font-size: 10px;
+}
+
 /* ##### Pub: Index ##### */
 span.index_buttons {
     padding-top: 5px;
@@ -50,6 +60,7 @@ a.index_big_button div { position: relative; top: 27px; }
 /* ##### Pub: Callsigns ##### */
 table.pocketpc_fill {
     min-width: 230px;
+    max-width: 245px;
 }
 
 /* ##### Navigation ##### */
@@ -67,10 +78,16 @@ img.navi_small_title_text { width: 150px; }
 
 a.navi_small_logo { float: left; }
 
+/* ##### Intern: Bindings ##### */
+input.searchBindings { width: 115px; }
+
 /* ##### Intern: Add Bindings ##### */
 img.addBinding { width: 80px; }
 input.addBinding { width: 142px; }
 span.addBindingError { font-size: 11px; }
+
+/* ##### Intern: Devices ##### */
+input.searchDevices { width: 150px; }
 
 /* ##### Intern: Devicelist ##### */
 div.devicelist_wrapper {

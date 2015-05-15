@@ -77,8 +77,9 @@ if($devices->deleteDeviceFormSubmitted()) {
         <div class="page_subtitle">Registered Devices</div>
         <hr class="header_spacer"/>
         <div>Below you will find a list of all registered devices, sorted by name, callsign and then deviceid.</div>
+        <br class="onlyPocketPc verysmall"/>
         <?php if($deleteDeviceError) { ?><b style="color: #EE0000;">Error deleting device!</b><?php } ?>
-        <?php $devices->generateRegisteredDevicesList($_POST["serachRegisteredDevices_field"], $_POST["serachRegisteredDevices_value"], $_POST["serachRegisteredDevices_availability"]); ?>
+        <?php $devices->generateRegisteredDevicesList($_POST["searchRegisteredDevices_field"], $_POST["searchRegisteredDevices_value"], $_POST["searchRegisteredDevices_availability"]); ?>
         <script language="text/Javascript">document.getElementById("devicelist_wrapper").style.maxHeight = "1000px";</script>
         <div style="display: none;" id="newDeviceSingleForm_wrapper">
             <br/>
