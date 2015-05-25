@@ -72,7 +72,7 @@ class devices {
                     <td><?=$row->{"devicetemplateid"}?></td>
                     <td id="devicetpl_name_<?=$row->{"devicetemplateid"}?>"><?=$row->{"name"}?></td>
                     <td class="pocketPcBreakWord" id="devicetpl_description_<?=$row->{"devicetemplateid"}?>"><?=$row->{"description"}?></td>
-                    <td class="pocketPcBreakWord" style="vertical-align: middle;" id="devicetpl_navi_<?=$row->{"devicetemplateid"}?>"><a href="#" onclick="editDeviceTemplate(<?=$row->{"devicetemplateid"}?>)" title="Edit"><img src="<?=domain.dir_img?>edit.png"/></a>&nbsp;<a href="#" onclick="deleteDeviceTemplate(<?=$row->{"devicetemplateid"}?>)" title="Delete"><img src="<?=domain.dir_img?>trashbin.png"/></a></td>
+                    <td class="pocketPcBreakWord" style="vertical-align: middle;" id="devicetpl_navi_<?=$row->{"devicetemplateid"}?>"><a href="#" onclick="editDeviceTemplate(<?=$row->{"devicetemplateid"}?>)" title="Edit"><img class="tableAction" src="<?=domain.dir_img?>edit.png"/></a>&nbsp;<a href="#" onclick="deleteDeviceTemplate(<?=$row->{"devicetemplateid"}?>)" title="Delete"><img class="tableAction" src="<?=domain.dir_img?>trashbin.png"/></a></td>
                 </tr>
             <?php
             }
@@ -207,7 +207,7 @@ class devices {
         if(!$search_field) { $optionSelected = "callsign"; }
         else { $optionSelected = $search_field; }
         ?>
-        <form method="POST" class="searchForm" id="deviceSearchForm" action="<?=domain?>index.php?p=devices" style="width: 240px; margin-bottom: 2px; magin-top: 5px;">
+        <form method="POST" class="searchForm" id="deviceSearchForm" action="<?=domain?>index.php?p=devices" style="margin-bottom: 2px; magin-top: 5px;">
             <input type="hidden" name="serachRegisteredDevices_reset" id="serachRegisteredDevices_reset" value=""/>
             <span class="onlyPocketPC">Search:</span><br class="onlyPocketPc"/>
             <table>
@@ -328,7 +328,7 @@ class devices {
                     <td><?=$device->{"callsign"}?></td>
                     <td class="removeOnPocketPc"><?=$device->{"serialnumber"}?></td>
                     <td class="removeOnPocketPc"><?=$device->{"notes"}?></td>
-                    <td style="vertical-align: middle;"><a href="#" onclick="deleteDevice('<?=$device->{"deviceid"}?>')" title="Delete device!"><img src="<?=domain.dir_img?>trashbin.png"/></a></td>
+                    <td style="vertical-align: middle;"><a href="#" onclick="deleteDevice('<?=$device->{"deviceid"}?>')" title="Delete device!"><img class="tableAction" src="<?=domain.dir_img?>trashbin.png"/></a></td>
                 </tr>
             <?php
             }

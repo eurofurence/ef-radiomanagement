@@ -417,6 +417,10 @@ div.userlist_wrapper {
     resize: both;
 }
 
+table.userlist { min-width: 450px; }
+
+input.searchUsers { width: 200px; }
+
 /* ##### Bindings-Styles ##### */
 div.bindinglist_wrapper {
     max-height: 450px;

@@ -190,8 +190,8 @@ class bindings {
             <table class="gptable">
                 <tr>
                     <td class="gptable_head">BID</td>
-                    <td class="gptable_head">User</td>
-                    <td class="gptable_head">Device</td>
+                    <td class="gptable_head">User (UID)</td>
+                    <td class="gptable_head">Device (DID)</td>
                     <td class="gptable_head">CS</td>
                     <td class="gptable_head">Bound Since</td>
                     <td class="gptable_head">Bound By</td>
@@ -222,7 +222,7 @@ class bindings {
                         <td><?=$devices[$row->{"deviceid"}]->{"callsign"}?></td>
                         <td><?=date("d.m.y H:i", strtotime($row->{"bound_since"}))?></td>
                         <td><?=$users[$row->{"bound_by"}]?> (<?=$row->{"bound_by"}?>)</td>
-                        <td style="vertical-align: middle;"><a href="#" onclick="deleteBinding('<?=$row->{"bindingid"}?>')"><img src="<?=domain.dir_img?>trashbin.png"</a></td>
+                        <td style="vertical-align: middle;"><a href="#" onclick="deleteBinding('<?=$row->{"bindingid"}?>')"><img class="tableAction" src="<?=domain.dir_img?>trashbin.png"</a></td>
                     </tr>
                     <?php
                 }
@@ -363,7 +363,7 @@ class bindings {
                         <td><?=$user->{"userid"}?></td>
                         <td><?=$user->{"regid"}?></td>
                         <td><?=$user->{"nickname"}?></td>
-                        <td style="vertical-align: middle; text-align: center;"><a href="<?=domain?>index.php?p=add_binding&searchUser_userid=<?=$user->{"userid"}?>" title="Select User"><img src="<?=domain.dir_img?>check.png"/></a></td>
+                        <td style="vertical-align: middle; text-align: center;"><a href="<?=domain?>index.php?p=add_binding&searchUser_userid=<?=$user->{"userid"}?>" title="Select User"><img class="tableAction" src="<?=domain.dir_img?>check.png"/></a></td>
                     </tr>
                 <?php
                 }
@@ -484,7 +484,7 @@ class bindings {
                             <td><?=$device->{"callsign"}?></td>
                             <td class="removeOnPocketPc"><?=$device->{"serialnumber"}?></td>
                             <td class="removeOnPocketPc"><?=$device->{"notes"}?></td>
-                            <td style="vertical-align: middle; text-align: center;"><a href="<?=domain?>index.php?p=add_binding&searchDevice_deviceid=<?=$device->{"deviceid"}?>" title="Select device!"><img src="<?=domain.dir_img?>check.png"/></a></td>
+                            <td style="vertical-align: middle; text-align: center;"><a href="<?=domain?>index.php?p=add_binding&searchDevice_deviceid=<?=$device->{"deviceid"}?>" title="Select device!"><img class="tableAction" src="<?=domain.dir_img?>check.png"/></a></td>
                         </tr>
                     <?php
                     }
@@ -533,7 +533,7 @@ class bindings {
                             <td><?=$device->{"callsign"}?></td>
                             <td class="removeOnPocketPc"><?=$device->{"serialnumber"}?></td>
                             <td class="removeOnPocketPc"><?=$device->{"notes"}?></td>
-                            <td style="vertical-align: middle; text-align: center;"><a href="<?=domain?>index.php?p=add_binding&addBinding_removeDevice=<?=$device->{"deviceid"}?>" title="Remove device!"><img src="<?=domain.dir_img?>trashbin.png"/></a></td>
+                            <td style="vertical-align: middle; text-align: center;"><a href="<?=domain?>index.php?p=add_binding&addBinding_removeDevice=<?=$device->{"deviceid"}?>" title="Remove device!"><img class="tableAction" src="<?=domain.dir_img?>trashbin.png"/></a></td>
                         </tr>
                     <?php } ?>
                 </table>

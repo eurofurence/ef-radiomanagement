@@ -43,6 +43,12 @@ form.searchForm * {
     font-size: 10px;
 }
 
+img.tableAction {
+    margin: 1px;
+    max-height: 14px;
+}
+
+
 /* ##### Pub: Index ##### */
 span.index_buttons {
     padding-top: 5px;
@@ -97,3 +103,6 @@ div.devicelist_wrapper {
 
 table.devicelist { font-size: 12px; }
 td.pocketPcBreakWord { word-wrap: break-word; }
+
+/* ##### Intern: Userlist ##### */
+input.searchUsers { width: 125px; }
