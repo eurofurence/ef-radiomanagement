@@ -3,7 +3,7 @@ require(basetpl_header);
 require_once(func_bindings);
 ?>
 
-<td class="content_td">
+<td class="public_title">
     <div class="title"><a href="<?=domain?>"><img class="titleBanner" src="<?=domain.dir_img?>title.jpg"/></a></div>
     <br/>
     <div class="callsignlist_wrapper">

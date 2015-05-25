@@ -46,6 +46,10 @@ div.title {
 @media (max-width: 300px) { div.title { margin-top: 10px; } }
 @media (max-width: 250px) { div.title { margin-top: 7px; } }
 
+td.public_title {
+    padding: 0px;
+}
+
 img.titleBanner {
     max-width: 90vw;
     margin-top: 5px;
@@ -71,7 +75,7 @@ table.content_wrapper {
 }
 
 table.content_wrapper td {
-    padding: 0px 0px 0px 0px;
+
     vertical-align: top;
 }
 
@@ -142,11 +146,13 @@ tr.gptable_odd:hover, tr.gptable_even:hover {
 @media (min-width: 700px) {
     .navi_big { display: table-cell; }
     .navi_small { display: none; }
+    td.content_td { padding: 0px 0px 0px 0px; }
 }
 
 @media (max-width: 700px) {
     .navi_big { display: none; }
     .navi_small { display: inline-block; }
+    td.content_td { padding: 0px 3px 0px 3px; }
 }
 
 td.navi_spacer_pocketpc {
@@ -260,14 +266,14 @@ span.navi_small li {
 
 
 /* ##### index-Styes ##### */
-@media (max-width: 300px) {
+@media (max-width: 400px) {
     span.index_buttons {
         height: 40vw;
         margin: 8px 8px 8px 8px;
     }
 }
 
-@media (min-width: 300px) {
+@media (min-width: 400px) {
     span.index_buttons {
         height: 80vw;
         margin: 15px 15px 15px 15px;
@@ -432,3 +438,7 @@ div.bindinglist_wrapper {
 input.searchBindings { width: 200px; }
 input.addBinding { width: 225px; }
 span.addBindingError { font-size: 12px; }
+
+@media (max-width: 400px) {
+    img.addBinding { width: 100px; }
+}

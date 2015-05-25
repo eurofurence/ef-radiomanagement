@@ -15,7 +15,7 @@
         //Login-Form not submitted or login failed - Print it!
         require_once(basetpl_header);
         ?>
-        <td class="content_td">
+        <td class="public_title">
             <div class="title"><a href="<?=domain?>"><img class="titleBanner" src="<?=domain.dir_img?>title.jpg"/></a></div>
             <br/>
             <div class="login_content_container">

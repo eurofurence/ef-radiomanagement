@@ -32,6 +32,8 @@ table.gptable td {
     padding-right: 2px;
 }
 
+td.content_td { padding: 0px 0px 0px 0px; }
+
 /* ##### Public Areas ##### */
 div.title {
     width: 247px;
