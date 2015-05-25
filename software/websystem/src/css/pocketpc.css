@@ -27,6 +27,11 @@ hr.header_spacer {
     margin-left: 0px;
 }
 
+table.gptable td {
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
 /* ##### Public Areas ##### */
 div.title {
     width: 247px;
@@ -98,7 +103,13 @@ input.searchDevices { width: 150px; }
 /* ##### Intern: Devicelist ##### */
 div.devicelist_wrapper {
     width: 240px;
+    max-height: none;
     overflow: visible;
+}
+
+table.devicelist td {
+    padding-left: 2px;
+    padding-right: 2px;
 }
 
 table.devicelist { font-size: 12px; }

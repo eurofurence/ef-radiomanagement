@@ -80,7 +80,7 @@ if($devices->deleteDeviceFormSubmitted()) {
         <br class="onlyPocketPc verysmall"/>
         <?php if($deleteDeviceError) { ?><b style="color: #EE0000;">Error deleting device!</b><?php } ?>
         <?php $devices->generateRegisteredDevicesList($_POST["searchRegisteredDevices_field"], $_POST["searchRegisteredDevices_value"], $_POST["searchRegisteredDevices_availability"]); ?>
-        <script language="text/Javascript">document.getElementById("devicelist_wrapper").style.maxHeight = "1000px";</script>
+        <?php if(!pocketPc) {?><script language="text/Javascript">document.getElementById("devicelist_wrapper").style.maxHeight = "1000px";</script><?php } ?>
         <div style="display: none;" id="newDeviceSingleForm_wrapper">
             <br/>
             <form method="POST" action="<?=domain?>index.php?p=devices" id="newDeviceSingleForm">
