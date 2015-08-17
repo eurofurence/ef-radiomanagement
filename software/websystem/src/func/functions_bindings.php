@@ -21,7 +21,8 @@ class bindings {
             WHERE
             bindings.`userid` = users.`userid` AND
             bindings.`deviceid` = devices.`deviceid` AND
-            devices.`callsign` IS NOT NULL
+            devices.`callsign` IS NOT NULL AND
+            NOT devices.`callsign` = ''
             ORDER BY `nickname`, `callsign` ASC");
         if($db->isError()) { die($db->isError()); }
 
