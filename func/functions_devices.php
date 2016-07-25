@@ -530,7 +530,7 @@ class devices {
             SELECT  devices.*, devicetemplates.`name`
             FROM `devices` devices, `devicetemplates` devicetemplates
             WHERE devices.`devicetemplateid` = devicetemplates.`devicetemplateid`
-            AND (`callsign`='".$db->escape($searchValue)."' OR `deviceid`='".$db->escape($searchValue)."' OR `name` LIKE '%".$db->escape($searchValue)."%')
+            AND (`serialnumber`='".$db->escape($searchValue)."' OR `callsign`='".$db->escape($searchValue)."' OR `deviceid`='".$db->escape($searchValue)."' OR `name` LIKE '%".$db->escape($searchValue)."%')
             ORDER BY `name` ASC, `callsign` ASC, `deviceid` ASC");
         }
         if($db->isError()) { die($db->isError()); }

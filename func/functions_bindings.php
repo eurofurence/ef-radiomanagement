@@ -410,7 +410,7 @@ class bindings {
         <span class="content_block">
             <div class="page_subtitle">Search for Device</div>
             <hr class="header_spacer"/>
-            <span class="content_block">Please scan or enter the desired device's callsign, name or DID!</span><br/>
+            <span class="content_block">Please scan or enter the desired device's S/N, Callsign, Name or DID!</span><br/>
             <br/>
             <table>
                 <tr>
@@ -418,7 +418,7 @@ class bindings {
                     <td>&nbsp;&nbsp;</td>
                     <td style="vertical-align: middle;">
                         <form method="POST" action="<?=domain?>index.php?p=add_binding" name="addBinding_searchDeviceForm">
-                            <span style="font-size: 12px;">Callsign, Name or DID</span><br/>
+                            <span style="font-size: 12px;">S/N, Callsign, Name or DID</span><br/>
                             <?php if($deviceNotFound) { ?><span class="addBindingError"><b style="color: #EE0000;">Error, no device was found!</b></span><br/><?php } ?>
                             <input type="hidden" name="addBinding_searchDeviceForm_submitted" value="true" />
                             <input type="text" name="addBinding_searchDeviceForm_searchString" class="addBinding" value="" placeholder="Enter or scan search value!" size="30" autocomplete="off" required autofocus/><br/>
