@@ -428,8 +428,13 @@ class bindings {
                 </tr>
             </table>
         </span><br/><br class="removeOnPocketPc"/>
-        <b>Selected user:</b>&nbsp;<br class="onlyPocketPc"/><?=$_SESSION["addBinding"]["user"]->{"nickname"}." (RID: ".$_SESSION["addBinding"]["user"]->{"regid"}." - UID: ".$_SESSION["addBinding"]["user"]->{"userid"}.")"?> - <a href="<?domain?>index.php?p=add_binding">Cancel</a>
+        <b>Selected user:</b>&nbsp;<br class="onlyPocketPc"/><?=$_SESSION["addBinding"]["user"]->{"nickname"}." (RID: ".$_SESSION["addBinding"]["user"]->{"regid"}." - UID: ".$_SESSION["addBinding"]["user"]->{"userid"}.")"?> -
+        <a href="<?=domain?>index.php?p=add_binding">Cancel</a>
         <?php
+
+        if(sizeof($_SESSION['addBinding']['devices']) > 0) {
+            echo ' - <a href="'.domain.'index.php?p=add_binding&addBinding_showOverview=true">To Overview</a>';
+        }
 
         return true;
     }

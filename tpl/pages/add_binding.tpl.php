@@ -66,8 +66,14 @@ $bindings = new bindings();
         } elseif(isset($_GET["addBinding_removeDevice"])) {
             //Remove desired device from $_SESSION and regenerate review-form
             unset($_SESSION["addBinding"]["devices"][$_GET["addBinding_removeDevice"]]);
-            if(sizeof($_SESSION["addBinding"]["devices"])<1) { $bindings->addBinding_printSearchDeviceForm(false); }
-            else { $bindings->addBinding_printReviewForm(); }
+
+            if (sizeof($_SESSION["addBinding"]["devices"]) < 1) {
+                $bindings->addBinding_printSearchDeviceForm(false);
+            } else {
+                $bindings->addBinding_printReviewForm();
+            }
+        } elseif(isset($_GET['addBinding_showOverview'])) {
+            $bindings->addBinding_printReviewForm();
         } elseif($_GET["saveBinding"]=="true") {
             $bindings->addBinding_saveBindingsCatch();
         } else {
