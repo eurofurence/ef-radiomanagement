@@ -540,16 +540,21 @@ class bindings {
 
         // Process query and remove all results that are allready about to be bound
         $devicesAboutToBind = array_keys($_SESSION["addBinding"]["devices"]);
+        $availableDeviceIds = array();
         while($row = mysqli_fetch_object($query_available_devices)) {
             if(!in_array($row->{'deviceid'}, $devicesAboutToBind)) {
-                //FIXME: Use random device to minimize collisions when more people add devices simultaniously
-                self::addBinding_selectDevice("", $row->{'deviceid'});
-                return false;
+                $availableDeviceIds[] = $row->{'deviceid'};
             }
         }
 
-        // No matching device found
-        self::addBinding_printSearchDeviceForm(true);
+        // Select random id to minimize collisions when more people add devices simultaniously
+        if(sizeof($availableDeviceIds) > 0) {
+            self::addBinding_selectDevice("", $availableDeviceIds[array_rand($availableDeviceIds, 1)]);
+        } else {
+            // No matching device found
+            self::addBinding_printSearchDeviceForm(true);
+        }
+
         return false;
     }
 
