@@ -55,7 +55,14 @@ $bindings = new bindings();
         } elseif($bindings->searchDeviceForm_submitted()) {
             $bindings->addBinding_selectDevice($_POST["addBinding_searchDeviceForm_searchString"], $_GET["searchDevice_deviceid"]);
         } elseif($_GET["addBinding_additionalDevice"]=="true") {
-            $bindings->addBinding_printSearchDeviceForm(false);
+            // Another device is wanted, check if quickadd device was selected
+            if(isset($_GET['addQuickaddDevice'])) {
+                // Add quickadd device
+                $bindings->addBinding_addQuickaddDevice($_GET['addQuickaddDevice']);
+            } else {
+                // Print default search form
+                $bindings->addBinding_printSearchDeviceForm(false);
+            }
         } elseif(isset($_GET["addBinding_removeDevice"])) {
             //Remove desired device from $_SESSION and regenerate review-form
             unset($_SESSION["addBinding"]["devices"][$_GET["addBinding_removeDevice"]]);

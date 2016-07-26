@@ -520,11 +520,48 @@ class bindings {
         return true;
     }
 
+    public function addBinding_addQuickaddDevice($devicetemplateid) {
+        global $db;
+
+        // Get available devices from db
+        $query_available_devices = $db->query("
+            SELECT devices.`deviceid` FROM `devices` devices
+            WHERE devices.`devicetemplateid` = ".$db->escape($devicetemplateid)."
+                AND `deviceid` NOT IN (SELECT `deviceid` FROM `bindings`)
+                AND devices.`devicetemplateid` IN (SELECT `devicetemplateid` FROM `devicetemplates` WHERE `allow_quickadd` = 1)
+        ");
+        if($db->isError()) { die($db->isError()); }
+
+        // Check if devices are still available
+        if(mysqli_num_rows($query_available_devices) < 1) {
+            self::addBinding_printSearchDeviceForm(true);
+            return false;
+        }
+
+        // Process query and remove all results that are allready about to be bound
+        $devicesAboutToBind = array_keys($_SESSION["addBinding"]["devices"]);
+        while($row = mysqli_fetch_object($query_available_devices)) {
+            if(!in_array($row->{'deviceid'}, $devicesAboutToBind)) {
+                //FIXME: Use random device to minimize collisions when more people add devices simultaniously
+                self::addBinding_selectDevice("", $row->{'deviceid'});
+                return false;
+            }
+        }
+
+        // No matching device found
+        self::addBinding_printSearchDeviceForm(true);
+        return false;
+    }
+
     /* addBinding_printReviewForm()
      *
      * This function prints the review-form for device adding!
      */
     public function addBinding_printReviewForm() {
+        // Get quickadd-devices
+        $devices = new Devices();
+        $quickadds = $devices->getQuickaddDevices();
+
         ?>
         <span class="content_block">
             <div class="page_subtitle">Review new binding</div>
@@ -558,7 +595,27 @@ class bindings {
                     <?php } ?>
                 </table>
             </div>
-            <span style="margin-top: 2px; width: 100%; text-align: center; display: inline-block;"><a href="<?=domain?>index.php?p=add_binding&saveBinding=true" title="Create Binding"><img src="<?=domain.dir_img?>addBinding.png"/>&nbsp;<b>Create Binding!</b></a>&nbsp;&nbsp;-&nbsp;&nbsp;<a href="<?=domain?>index.php?p=add_binding&addBinding_additionalDevice=true" title="Add another device">Add another device!</a></span><br/>
+            <span style="margin-top: 2px; width: 100%; text-align: center; display: inline-block;">
+                <a class="saveBinding" href="<?=domain?>index.php?p=add_binding&saveBinding=true" title="Create Binding"><img src="<?=domain.dir_img?>addBinding.png"/>&nbsp;<b>Create Binding!</b></a>
+                <a class="addAnotherDevice" href="<?=domain?>index.php?p=add_binding&addBinding_additionalDevice=true" title="Add another device">Add another device</a>
+            </span>
+            <br/>
+            <div>
+                <b>QuickAdd</b><br/>
+                <?php
+                    foreach($quickadds as $quickadd) {
+                        $linkTarget = "#";
+                        if($quickadd['available'] > 0) {
+                            $linkTarget = domain.'index.php?p=add_binding&addBinding_additionalDevice=true&addQuickaddDevice='.$quickadd['devicetemplateid'];
+                        }
+                        ?>
+                        <a class="quickaddButton <?=$quickadd['available']<1?'quickaddButton_disabled':''?>" href="<?=$linkTarget?>">
+                            <?=$quickadd['name']?> (<?=$quickadd['available']?>)
+                        </a>
+                        <?php
+                    }
+                 ?>
+            </div>
         </span><br/>
         <?php
         return true;

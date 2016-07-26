@@ -554,4 +554,39 @@ class devices {
         return $outputDevices;
     }
 
+    /**
+     * Gets all devicetemplates that allow quickadd from db and check the availability for each
+     *
+     * @return array|null
+     */
+    public function getQuickaddDevices() {
+        global $db;
+        $quickadd_data = array();
+
+        // Query DB
+        $query_quickadd = $db->query("
+            SELECT devicetemplates.`devicetemplateid`, devicetemplates.`name`, SUM(if(devices.`deviceid` NOT IN (SELECT `deviceid` FROM `bindings` UNION ALL SELECT -1),1,0)) AS available
+            FROM devicetemplates
+            LEFT JOIN devices
+            ON (devicetemplates.`devicetemplateid` = devices.`devicetemplateid`)
+            WHERE devicetemplates.`allow_quickadd` = 1
+            GROUP BY devicetemplates.`devicetemplateid`
+        ");
+        if($db->isError()) { die($db->isError()); }
+
+        // Build response from query
+        while($row = mysqli_fetch_array($query_quickadd)) {
+            $quickadd_data[$row['devicetemplateid']] = $row;
+        }
+
+        // Subtract devices that are already about to be bound
+        foreach($_SESSION["addBinding"]["devices"] as $device) {
+            if(isset($quickadd_data[$device->{'devicetemplateid'}])) {
+                $quickadd_data[$device->{'devicetemplateid'}]['available']--;
+            }
+        }
+
+        return $quickadd_data;
+    }
+
 }

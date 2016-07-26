@@ -65,6 +65,7 @@ div.title {
     width: 100%;
     text-align: center;
 }
+
 @media (min-width: 400px) { div.title { margin-top: 20px; } }
 @media (max-width: 400px) { div.title { margin-top: 15px; } }
 @media (max-width: 300px) { div.title { margin-top: 10px; } }
@@ -465,4 +466,66 @@ span.addBindingError { font-size: 12px; }
 
 @media (max-width: 400px) {
     img.addBinding { width: 100px; }
+}
+
+a.quickaddButton {
+    display: inline-block;
+    background-color: rgba(0, 99, 87, 0.80);
+    color: #ffffff;
+
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+
+    padding: 10px 10px;
+    margin: 2px;
+}
+
+a.quickaddButton_disabled {
+    background-color: rgba(0, 99, 87, 0.4) !important;
+}
+
+a.quickaddButton:link, a.quickaddButton:visited, a.addAnotherDevice:link, a.addAnotherDevice:visited, a.saveBinding:link, a.saveBinding:visited {
+    text-decoration: none;
+}
+a.quickaddButton:hover, a.quickaddButton:active, a.addAnotherDevice:hover, a.addAnotherDevice:active {
+    background-color: rgba(0, 99, 87, 1);
+    text-decoration: none;
+}
+
+a.saveBinding:hover, a.saveBinding:active {
+    background-color: #53a553;
+    text-decoration: none;
+}
+
+a.saveBinding {
+    display: inline-block;
+    background-color: #5cb85c;
+    color: #ffffff;
+
+    line-height: 22px;
+    font-weight: bold;
+
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+
+    padding: 10px 10px;
+    margin: 5px;
+}
+
+a.addAnotherDevice {
+    display: inline-block;
+    background-color: rgba(0, 99, 87, 0.80);
+    color: #ffffff;
+
+    line-height: 22px;
+    font-weight: bold;
+
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+
+    padding: 10px 10px;
+    margin: 5px;
 }
