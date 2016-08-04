@@ -40,8 +40,13 @@ $bindings = new bindings();
         <br class="small"/>
 
         <?php
-            if($_POST['removeBinding_searchDeviceForm_submitted']) {
-                //FIXME: Implement device based search
+            if($_POST['removeBinding_searchDeviceForm_submitted'] || $_GET['findDevice_deviceid']) {
+                // Check if deviceid-override is active
+                if ($_GET['findDevice_deviceid']) {
+                    $bindings->removeBinding_findDevice(false, $_GET['findDevice_deviceid']);
+                } else {
+                    $bindings->removeBinding_findDevice($_POST['removeBinding_searchDeviceForm_searchString'], false);
+                }
             } elseif($_POST['removeBinding_searchUserForm_submitted'] || $_GET['findUser_userid']) {
                 // Check if userid-override is active
                 if ($_GET['findUser_userid']) {
@@ -52,7 +57,7 @@ $bindings = new bindings();
             } elseif($_GET['removeAllByUID']) {
                 $bindings->removeBinding_removeAllBindingsFromUser($_GET['removeAllByUID']);
             } else {
-                $bindings->removeBinding_printSearchUserForm(false);
+                $bindings->removeBinding_printSearchUserForm(false, false);
             }
         ?>
 

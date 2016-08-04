@@ -732,7 +732,7 @@ class bindings {
      *
      * @param $userNotFound TRUE if no user was found
      */
-    public function removeBinding_printSearchUserForm($userNotFound) {
+    public function removeBinding_printSearchUserForm($userNotFound, $deviceNotFound) {
         ?>
         <span class="content_block">
             <div class="page_subtitle">Search by User</div>
@@ -766,7 +766,7 @@ class bindings {
                     <td style="vertical-align: middle;">
                         <form method="POST" action="<?=domain?>index.php?p=remove_binding" name="removeBinding_searchDeviceForm">
                             <span style="font-size: 12px;">S/N or Callsign</span><br/>
-                            <?php if($deviceNotFound) { ?><span class="addBindingError"><b style="color: #EE0000;">Error, no device was found!</b></span><br/><?php } ?>
+                            <?php if($deviceNotFound) { ?><span class="addBindingError"><b style="color: #EE0000;">Error, no bound device was found!</b></span><br/><?php } ?>
                             <input type="hidden" name="removeBinding_searchDeviceForm_submitted" value="true" />
                             <input type="text" name="removeBinding_searchDeviceForm_searchString" class="addBinding" value="" placeholder="Enter or scan search value!" size="30" autocomplete="off" required tabindex=1 autofocus/><br/>
                             <input style="float: right; margin-top: 3px;" type="submit" value="Serach"/>
@@ -797,7 +797,7 @@ class bindings {
         }
 
         //Check if users were found
-        if(sizeof($searchUsers)<1) { self::removeBinding_printSearchUserForm(true); return false; }
+        if(sizeof($searchUsers)<1) { self::removeBinding_printSearchUserForm(true, false); return false; }
 
         //Check if multiple users were found
         if(sizeof($searchUsers)>1) {
@@ -836,6 +836,80 @@ class bindings {
         } else {
             //Only one user was found
             self::removeBinding_printConfirmationForm(array_values($searchUsers)[0]);
+        }
+
+        return true;
+    }
+
+    /**
+     * Finds devices based on the given serachString or selects a device based on the DID
+     *
+     * @param $searchString
+     * @param $deviceIdOverride
+     */
+    public function removeBinding_findDevice($searchString, $deviceIdOverride) {
+        //Gain devices access
+        $devices = new Devices();
+        global $db;
+        global $sessions;
+
+        //Search for devices
+        $searchedDevices = $devices->searchDevices($searchString, $deviceIdOverride, true);
+
+        //Check if devices were found
+        if(sizeof($searchedDevices)<1) { self::removeBinding_printSearchUserForm(false, true); return false; }
+
+        //Check if multiple devices were found
+        if(sizeof($searchedDevices)>1) {
+            //Print selection table
+            ?>
+            <span class="content_block">
+            <div class="page_subtitle">Search for Device</div>
+            <hr class="header_spacer"/>
+            <div style="margin-bottom: 2px;">Multiple devices are matching your search. Please select one from below!</div>
+            <div class="devicelist_wrapper" id="devicelist_wrapper">
+                <table class="devicelist" id="devicelist_table" style="margin-left: 0px;">
+                    <tr>
+                        <td class="devicelist_head">DID</td>
+                        <td class="devicelist_head">Name (DTID)</td>
+                        <td class="devicelist_head">CS</td>
+                        <td class="devicelist_head removeOnPocketPc">S/N</td>
+                        <td class="devicelist_head removeOnPocketPc">Notes</td>
+                        <td class="devicelist_head" style="width: 14px;">&nbsp;</td>
+                    </tr>
+                    <?php
+
+                    //Spit out devices
+                    $row_color = "even";
+                    foreach($searchedDevices as $device) {
+                        if($row_color == "even") { $row_color = "odd"; }
+                        else { $row_color = "even"; }
+                        ?>
+                        <tr class="devicelist_<?=$row_color?>">
+                            <td><?=$device->{"deviceid"}?></td>
+                            <td class="pocketPcBreakWord"><?=$device->{"name"}?>&nbsp;(<?=$device->{"devicetemplateid"}?>)</td>
+                            <td><?=$device->{"callsign"}?></td>
+                            <td class="removeOnPocketPc"><?=$device->{"serialnumber"}?></td>
+                            <td class="removeOnPocketPc"><?=$device->{"notes"}?></td>
+                            <td style="vertical-align: middle; text-align: center;"><a href="<?=domain?>index.php?p=remove_binding&findDevice_deviceid=<?=$device->{"deviceid"}?>" title="Select device!"><img class="tableAction" src="<?=domain.dir_img?>check.png"/></a></td>
+                        </tr>
+                    <?php
+                    }
+                ?></table></div><i>DID: DeviceID</i>&nbsp;&nbsp;-&nbsp;&nbsp;<i>DTID: DevicetemplateID</i>&nbsp;&nbsp;-&nbsp;&nbsp;<i>CS: Callsign</i><br/><?php
+        } else {
+            //Only one device was found
+
+            // Check if device is bound and get owner
+            $deviceOwnerQuery = $db->query("SELECT `userid` FROM `bindings` WHERE `deviceid` = '".array_values($searchedDevices)[0]->{'deviceid'}."'");
+            if($db->isError()) { die($db->isError()); }
+            $foundUserId = mysqli_fetch_object($deviceOwnerQuery);
+
+            if(!$foundUserId) {
+                // Device not bound
+                self::removeBinding_printSearchUserForm(false, true);
+            } else {
+                self::removeBinding_printConfirmationForm(array_values($sessions->findUser(false, false, $foundUserId->{'userid'}))[0]);
+            }
         }
 
         return true;

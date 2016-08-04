@@ -510,7 +510,7 @@ class devices {
      * @param $searchValue The desired search-string
      * @param $deviceIdOverride Absolute Device-ID
      */
-    public function searchDevices($searchValue, $deviceIdOverride) {
+    public function searchDevices($searchValue, $deviceIdOverride, $includeUnboundDevices = false) {
         //Check input
         if(!$searchValue && !$deviceIdOverride) { return false; }
 
@@ -546,7 +546,7 @@ class devices {
         //Generate output data array of only available devices
         $outputDevices = array();
         while($row = mysqli_fetch_object($query_devices)) {
-            if(!in_array($row->{"deviceid"}, $boundDevices)) {
+            if($includeUnboundDevices || !in_array($row->{"deviceid"}, $boundDevices)) {
                 $outputDevices[$row->{"deviceid"}] = $row;
             }
         }
