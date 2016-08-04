@@ -290,6 +290,27 @@ class bindings {
         return true;
     }
 
+    /**
+     * Deletes all bindings from the current user
+     *
+     * @param $userid
+     */
+    public function deleteAllBindingsFromUser($userid) {
+        // Check input
+        if(!$userid) return false;
+
+        global $db;
+
+        // Get users bindings
+        $bindingsQuery = $db->query("SELECT `bindingid` FROM `bindings` WHERE `userid` = '".$db->escape($userid)."'");
+        if($db->isError()) { die($db->isError()); }
+
+        // Delete all bindings
+        while($row = mysqli_fetch_object($bindingsQuery)) {
+            self::deleteBinding($row->{'bindingid'});
+        }
+    }
+
     /* addBinding_printSearchUserForm()
      *
      * This function generates the form for the first step
@@ -704,6 +725,216 @@ class bindings {
         } else {
             ?><b style="color: #EE0000;">Error, desired devices were allready bound! Resetting.</b><?php
         }
+    }
+
+    /**
+     * Generates a form to find a user
+     *
+     * @param $userNotFound TRUE if no user was found
+     */
+    public function removeBinding_printSearchUserForm($userNotFound) {
+        ?>
+        <span class="content_block">
+            <div class="page_subtitle">Search by User</div>
+            <hr class="header_spacer"/>
+            <span class="content_block">Please scan or enter the desired users Registration-ID or Nickname!</span><br/>
+                <table>
+                    <tr>
+                        <td style="vertical-align: middle;"><img class="addBinding" src="<?=domain.dir_img?>usercard.png"/></td>
+                        <td>&nbsp;&nbsp;</td>
+                        <td style="vertical-align: middle;">
+                            <form method="POST" action="<?=domain?>index.php?p=remove_binding" name="removeBinding_searchUserForm">
+                                <span style="font-size: 12px;">Reg-ID / Nickname</span><br/>
+                                <?php if($userNotFound) { ?><span class="addBindingError"><b style="color: #EE0000;">Error, no user was found!</b></span><br/><?php } ?>
+                                <input type="hidden" name="removeBinding_searchUserForm_submitted" value="true" />
+                                <input type="text" name="removeBinding_searchUserForm_searchString" class="addBinding" value="" placeholder="Enter or scan ID or nick!" size="30" autocomplete="off" tabindex=2 required/><br/>
+                                <input style="float: right; margin-top: 3px;" type="submit" value="Serach"/>
+                            </form>
+                        </td>
+                    </tr>
+                </table>
+        </span><br/>
+        <span class="content_block">
+            <div class="page_subtitle">Search by Radio</div>
+            <hr class="header_spacer"/>
+            <span class="content_block">Please scan or enter the desired device's S/N or Callsign!</span><br/>
+            <br/>
+            <table>
+                <tr>
+                    <td style="vertical-align: middle;"><img class="addBinding" src="<?=domain.dir_img?>barcode_scan.png"/></td>
+                    <td>&nbsp;&nbsp;</td>
+                    <td style="vertical-align: middle;">
+                        <form method="POST" action="<?=domain?>index.php?p=remove_binding" name="removeBinding_searchDeviceForm">
+                            <span style="font-size: 12px;">S/N or Callsign</span><br/>
+                            <?php if($deviceNotFound) { ?><span class="addBindingError"><b style="color: #EE0000;">Error, no device was found!</b></span><br/><?php } ?>
+                            <input type="hidden" name="removeBinding_searchDeviceForm_submitted" value="true" />
+                            <input type="text" name="removeBinding_searchDeviceForm_searchString" class="addBinding" value="" placeholder="Enter or scan search value!" size="30" autocomplete="off" required tabindex=1 autofocus/><br/>
+                            <input style="float: right; margin-top: 3px;" type="submit" value="Serach"/>
+                        </form>
+                    </td>
+                </tr>
+            </table>
+        </span><br/>
+        <?php
+
+        return true;
+    }
+
+    /**
+     * Tries to find the requested user
+     *
+     * @param $searchString String to search for in the users-table
+     * @param $userIdOverride If given the user will be selected by his userid
+     * @return bool
+     */
+    public function removeBinding_findUser($searchString, $userIdOverride) {
+        //Search for users
+        global $sessions;
+        if(!$userIdOverride) {
+            $searchUsers = $sessions->findUser($searchString, $searchString, false);
+        } else {
+            $searchUsers = $sessions->findUser(false, false, $userIdOverride);
+        }
+
+        //Check if users were found
+        if(sizeof($searchUsers)<1) { self::removeBinding_printSearchUserForm(true); return false; }
+
+        //Check if multiple users were found
+        if(sizeof($searchUsers)>1) {
+            //Print gptable for user-selection
+            ?>
+            <span class="content_block">
+            <div class="page_subtitle">Search by User</div>
+            <hr class="header_spacer"/>
+            <div style="margin-bottom: 2px;">Multiple users are matching your search. Please select one from below!</div>
+            <div class="userlist_wrapper" id="userlist_wrapper">
+                <table class="gptable pocketpc_fill" style="margin-left: 0px;">
+                    <tr>
+                        <td class="gptable_head">UID</td>
+                        <td class="gptable_head">RID</td>
+                        <td class="gptable_head">Nickname</td>
+                        <td class="gptable_head" style="width: 14px;">&nbsp;</td>
+                    </tr>
+                    <?php
+                    //Spit out devices
+                    $row_color = "even";
+                    foreach($searchUsers as $user) {
+                        if($row_color == "even") { $row_color = "odd"; }
+                        else { $row_color = "even"; }
+                        ?>
+                        <tr class="gptable_<?=$row_color?>">
+                            <td><?=$user->{"userid"}?></td>
+                            <td><?=$user->{"regid"}?></td>
+                            <td><?=$user->{"nickname"}?></td>
+                            <td style="vertical-align: middle; text-align: center;"><a href="<?=domain?>index.php?p=remove_binding&findUser_userid=<?=$user->{"userid"}?>" title="Select User"><img class="tableAction" src="<?=domain.dir_img?>check.png"/></a></td>
+                        </tr>
+                        <?php
+                    }
+                    ?></table></div><i>UID: Userid</i>&nbsp;&nbsp;-&nbsp;&nbsp;<i>RID: RegID</i><br/>
+            <?php
+            return true;
+        } else {
+            //Only one user was found
+            self::removeBinding_printConfirmationForm(array_values($searchUsers)[0]);
+        }
+
+        return true;
+    }
+
+    /**
+     * Asks the user if he is sure to delete all bindings for the user
+     * @param $userdata
+     */
+    public function removeBinding_printConfirmationForm($userdata) {
+        // Check input
+        if(!$userdata) {
+            die("No userdata recieved.");
+        }
+
+        global $db;
+
+        // Get all bindings for user
+        $activeBindingsQuery = $db->query("
+            SELECT bindings.`bindingid`, devices.*, devicetemplates.`name`
+            FROM bindings `bindings`, devices `devices`, devicetemplates `devicetemplates`
+            WHERE `userid` = ".$db->escape($userdata->{'userid'})." AND devices.`deviceid` = bindings.`deviceid` AND devices.`devicetemplateid` = devicetemplates.`devicetemplateid`
+        ");
+        if($db->isError()) { die($db->isError()); }
+
+        // Build bindings array
+        $activeBindings = array();
+        while($row = mysqli_fetch_object($activeBindingsQuery)) {
+            $activeBindings[] = $row;
+        }
+
+        // Print header
+        ?>
+        <span class="content_block">
+            <div class="page_subtitle">Active Bindings</div>
+            <hr class="header_spacer"/>
+        <?php
+
+        // Analyze bindings
+        if(sizeof($activeBindings) < 1) {
+            // User has no bindings
+            ?>
+            The user <b><?=$userdata->{'nickname'}?>(RID: <?=$userdata->{'regid'}?>, UID: <?=$userdata->{'userid'}?>)</b> has currently no active bindings.<br/><br/>
+            <a href="<?=domain?>index.php?p=remove_binding">Try another user</a>
+            <?php
+        } else {
+            // Bindings found. List all and ask the user to confirm return of all devices
+            ?>
+            The user <b><?=$userdata->{'nickname'}?>(RID: <?=$userdata->{'regid'}?>, UID: <?=$userdata->{'userid'}?>)</b> has currently <?=sizeof($activeBindings)?> active bindings. Please make sure every device listed below is returned.<br/><br/>
+            <div class="devicelist_wrapper" id="devicelist_wrapper">
+                <table class="devicelist" id="devicelist_table" style="margin-left: 0px;">
+                    <tr>
+                        <td class="devicelist_head">BID</td>
+                        <td class="devicelist_head">Name (DTID)</td>
+                        <td class="devicelist_head">CS</td>
+                        <td class="devicelist_head removeOnPocketPc">S/N</td>
+                        <td class="devicelist_head removeOnPocketPc">Notes</td>
+                    </tr>
+                    <?php
+                    //Spit out bindings
+                    $row_color = "even";
+                    foreach($activeBindings as $binding) {
+                        if($row_color == "even") { $row_color = "odd"; }
+                        else { $row_color = "even"; }
+                        ?>
+                        <tr class="devicelist_<?=$row_color?>">
+                            <td><?=$binding->{'bindingid'}?></td>
+                            <td><?=$binding->{'name'}?> (<?=$binding->{'devicetemplateid'}?>)</td>
+                            <td><?=$binding->{'callsign'}?></td>
+                            <td class="removeOnPocketPc"><?=$binding->{'serialnumber'}?></td>
+                            <td class="removeOnPocketPc"><?=$binding->{'notes'}?></td>
+                        </tr>
+                    <?php } ?>
+                </table>
+            </div>
+            <span style="margin-top: 2px; width: 100%; text-align: center; display: inline-block;">
+                <a class="saveBinding" href="<?=domain?>index.php?p=remove_binding&removeAllByUID=<?=$userdata->{'userid'}?>" title="Everything Returned"><img src="<?=domain.dir_img?>check.png"/>&nbsp;<b>Everything returned</b></a>
+                <a class="addAnotherDevice" href="<?=domain?>index.php?p=bindings&sfield=userid&svalue=<?=$userdata->{'userid'}?>" title="Partially returned">Partially returned</a><br/>
+                <a href="<?=domain?>index.php?p=remove_binding">Select another user</a>
+            </span>
+            <?php
+        }
+
+        // Print footer
+        ?></span><?php
+    }
+
+    /**
+     * Removes all bindings from the given user
+     *
+     * @param $userid
+     */
+    public function removeBinding_removeAllBindingsFromUser($userid) {
+        self::deleteAllBindingsFromUser($userid);
+
+        ?>
+        <b style="color: #11922E">Success, desired bindings were deleted :)</b><br/><br/>
+        <a href="<?domain?>index.php?p=remove_binding">Delete other bindings</a>
+        <?php
     }
 }
 
