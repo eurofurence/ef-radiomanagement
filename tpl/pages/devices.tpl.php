@@ -35,7 +35,7 @@ $deviceTemplateFormEditMessage = $devices->proccessDeviceTemplateEdit();
 
 //Check if addDeviceTemplateForm was submitted
 if($devices->newDeviceTemplateFormSubmitted()) {
-    if(!$devices->addNewDeviceTemplate($_POST["newdevicetemplateform_name"], $_POST["newdevicetemplateform_description"])) {
+    if(!$devices->addNewDeviceTemplate($_POST["newdevicetemplateform_name"], $_POST["newdevicetemplateform_description"], $_POST['newdevicetemplateform_allow_quickadd'])) {
         $addNewDeviceTemplateError = true;
     }
 }
@@ -91,7 +91,8 @@ if($devices->deleteDeviceFormSubmitted()) {
                 <input type="hidden" name="newdevicetemplateform_submitted" value="true"/>
                 <br/><b>New Devicetemplate</b>&nbsp;-&nbsp;<a href="#" onclick="despawnAddDeviceTemplateForm()">Cancel</a><br/>
                 <input type="text" name="newdevicetemplateform_name" value="" placeholder="Device-Name" style="width: 200px; <?php if($addNewDeviceTemplateError) { echo "border: 1px solid #EE0000;"; } ?>" required/>
-                <input type="text" name="newdevicetemplateform_description" value="" placeholder="Device-Description" style="width: 300px;"/>
+                <input type="text" name="newdevicetemplateform_description" value="" placeholder="Device-Description" style="width: 260px;"/>
+                QA:<input type="checkbox" name="newdevicetemplateform_allow_quickadd" value="true"/>
                 <input type="submit" value="Save" style="border: 1px solid #006357;" />
             </form>
         </div>

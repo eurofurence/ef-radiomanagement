@@ -27,6 +27,7 @@
 var lastDeviceTemplateId;
 var lastDeviceTemplateName;
 var lastDeviceTemplateDescription;
+var lastDeviceTemplateAllowQuickadd;
 var lastDeviceTemplateNavi;
 
 /* spawnAddDeviceTemplateForm()
@@ -56,6 +57,7 @@ function resetLastDeviceTemplateEdit() {
     //Revert Changes
     document.getElementById("devicetpl_name_"+lastDeviceTemplateId).innerHTML = lastDeviceTemplateName;
     document.getElementById("devicetpl_description_"+lastDeviceTemplateId).innerHTML = lastDeviceTemplateDescription;
+    document.getElementById("devicetpl_allow_quickadd_"+lastDeviceTemplateId).innerHTML = lastDeviceTemplateAllowQuickadd;
     document.getElementById("devicetpl_navi_"+lastDeviceTemplateId).innerHTML = lastDeviceTemplateNavi;
 
     return true;
@@ -105,23 +107,27 @@ function editDeviceTemplate(devicetemplateid) {
     if(lastDeviceTemplateId) {
         document.getElementById("devicetpl_name_"+lastDeviceTemplateId).innerHTML = lastDeviceTemplateName;
         document.getElementById("devicetpl_description_"+lastDeviceTemplateId).innerHTML = lastDeviceTemplateDescription;
+        document.getElementById("devicetpl_allow_quickadd_"+lastDeviceTemplateId).innerHTML = lastDeviceTemplateAllowQuickadd;
         document.getElementById("devicetpl_navi_"+lastDeviceTemplateId).innerHTML = lastDeviceTemplateNavi;
     }
 
     //Get elements
     var devicetpl_name = document.getElementById("devicetpl_name_"+devicetemplateid);
     var devicetpl_description = document.getElementById("devicetpl_description_"+devicetemplateid);
+    var devicetpl_allow_quickadd = document.getElementById("devicetpl_allow_quickadd_"+devicetemplateid);
     var devicetpl_navi = document.getElementById("devicetpl_navi_"+devicetemplateid);
 
     //Get old field contents
     var old_name = devicetpl_name.innerHTML;
     var old_description = devicetpl_description.innerHTML;
+    var old_allow_quickadd = devicetpl_allow_quickadd.innerHTML;
     var old_navi = devicetpl_navi.innerHTML;
 
     //Set new lastDeviceTemplateId and co.
     lastDeviceTemplateId = devicetemplateid;
     lastDeviceTemplateName = old_name;
     lastDeviceTemplateDescription = old_description;
+    lastDeviceTemplateAllowQuickadd = old_allow_quickadd;
     lastDeviceTemplateNavi = old_navi;
 
     //Set current edit-id in form and set action-type to 1 (Edit)
@@ -131,6 +137,7 @@ function editDeviceTemplate(devicetemplateid) {
     //Insert form-fields into table and update navi
     devicetpl_name.innerHTML = '<input type="text" style="width: 200px;" name="devicetpl_edit_name" value=\''+old_name+'\' required />';
     devicetpl_description.innerHTML = '<input type="text" style="width: 300px;" name="devicetpl_edit_description" value=\''+old_description+'\' />';
+    devicetpl_allow_quickadd.innerHTML = '<input type="checkbox" name="devicetpl_edit_allow_quickadd" value="true" '+((devicetpl_allow_quickadd.getAttribute('data-allow-quickadd')=='1')?'checked':'')+' />'
     devicetpl_navi.innerHTML = '<a href="#" onclick="editDeviceTemplateSubmit()" title="Save Changes"><img src="img/check.png"/></a>&nbsp;<a href="#" onclick="resetLastDeviceTemplateEdit()" title="Revert Changes"><img src="img/return.png"/></a>';
 
     return true;

@@ -77,6 +77,7 @@ class devices {
                 <td class="gptable_head">DTID</td>
                 <td class="gptable_head">Name</td>
                 <td class="gptable_head">Description</td>
+                <td class="gptable_head">QA</td>
                 <td class="gptable_head"></td>
             </tr>
             <?php
@@ -91,12 +92,21 @@ class devices {
                     <td><?=$row->{"devicetemplateid"}?></td>
                     <td id="devicetpl_name_<?=$row->{"devicetemplateid"}?>"><?=$row->{"name"}?></td>
                     <td class="pocketPcBreakWord" id="devicetpl_description_<?=$row->{"devicetemplateid"}?>"><?=$row->{"description"}?></td>
+                    <td id="devicetpl_allow_quickadd_<?=$row->{"devicetemplateid"}?>" data-allow-quickadd="<?=$row->{'allow_quickadd'}?>" style="text-align: center;">
+                        <?php
+                        if($row->{'allow_quickadd'} == 1) {
+                            echo "<img src=\"".domain.dir_img."check.png\"/>";
+                        } else {
+                            echo "<img src=\"".domain.dir_img."cross.png\"/>";
+                        }
+                        ?>
+                    </td>
                     <td class="pocketPcBreakWord" style="vertical-align: middle;" id="devicetpl_navi_<?=$row->{"devicetemplateid"}?>"><a href="#" onclick="editDeviceTemplate(<?=$row->{"devicetemplateid"}?>)" title="Edit"><img class="tableAction" src="<?=domain.dir_img?>edit.png"/></a>&nbsp;<a href="#" onclick="deleteDeviceTemplate(<?=$row->{"devicetemplateid"}?>)" title="Delete"><img class="tableAction" src="<?=domain.dir_img?>trashbin.png"/></a></td>
                 </tr>
             <?php
             }
             ?></table>
-            <i>DTID: DevicetemplateID</i>&nbsp;&nbsp;-&nbsp;&nbsp;<a href="#" onclick="spawnAddDeviceTemplateForm()">New Devicetemplate</a><br/>
+            <i>DTID: DevicetemplateID</i>&nbsp;&nbsp;-&nbsp;&nbsp;<i>QA: Quickadd</i>&nbsp;&nbsp;-&nbsp;&nbsp;<a href="#" onclick="spawnAddDeviceTemplateForm()">New Devicetemplate</a><br/>
         </form>
         <?php
 
@@ -135,12 +145,13 @@ class devices {
             if(!$_POST["devicetpl_edit_devicetemplateid"] || !$_POST["devicetpl_edit_name"]) { return "<b style=\"color: #EE0000;\">Error: Name can't be empty!!</b>"; }
 
             //Update database
-            $db->query("UPDATE `devicetemplates` SET `name`='".$db->escape($_POST["devicetpl_edit_name"])."', `description`='".$db->escape($_POST["devicetpl_edit_description"])."' WHERE `devicetemplateid`='".$db->escape($_POST["devicetpl_edit_devicetemplateid"])."' LIMIT 1");
+            $allow_quickadd = ($_POST['devicetpl_edit_allow_quickadd'] == 'true') ? '1':'0';
+            $db->query("UPDATE `devicetemplates` SET `name`='".$db->escape($_POST["devicetpl_edit_name"])."', `description`='".$db->escape($_POST["devicetpl_edit_description"])."', `allow_quickadd`='".$allow_quickadd."' WHERE `devicetemplateid`='".$db->escape($_POST["devicetpl_edit_devicetemplateid"])."' LIMIT 1");
             if($db->isError()) { die($db->isError()); }
 
             //Insert log
             global $core, $sessions;
-            $core->addLog($sessions->getUserId(), "Updated devicetemplate with ID ".$_POST["devicetpl_edit_devicetemplateid"].". Set name to '".$_POST["devicetpl_edit_name"]."' and description to '".$_POST["devicetpl_edit_description"]."'.");
+            $core->addLog($sessions->getUserName()." (UID: ".$sessions->getUserId().")", "Updated devicetemplate with ID ".$_POST["devicetpl_edit_devicetemplateid"].". Set name to '".$_POST["devicetpl_edit_name"]."', description to '".$_POST["devicetpl_edit_description"]."' and allow_quickadd to '".$allow_quickadd."'.");
 
             return "";
 
@@ -188,24 +199,32 @@ class devices {
      *
      * @param $new_name The new devicetemplate-name
      * @param $new_description The new devicetemplate-description
+     * @param $allow_quickadd Sets the allow_quickadd flag if desired
      *
      * @return TRUE Success
      * @return FALSE Error
      */
-    public function addNewDeviceTemplate($new_name, $new_description) {
+    public function addNewDeviceTemplate($new_name, $new_description, $allow_quickadd) {
         //Check input
         if(!$new_name) { return false; }
 
         //Gain db access
         global $db;
 
+        // Format quickadd
+        if($allow_quickadd) {
+            $allow_quickadd = 1;
+        } else {
+            $allow_quickadd = 0;
+        }
+
         //Insert new template into device
-        $db->query("INSERT INTO `devicetemplates` (`name`, `description`) VALUES ('".$db->escape($new_name)."', '".$db->escape($new_description)."')");
+        $db->query("INSERT INTO `devicetemplates` (`name`, `description`, `allow_quickadd`) VALUES ('".$db->escape($new_name)."', '".$db->escape($new_description)."', '".$allow_quickadd."')");
         if($db->isError()) { die($db->isError()); }
 
         //Insert log
         global $core, $sessions;
-        $core->addLog($sessions->getUserName()." (UID: ".$sessions->getUserId().")", "Added new devicetemplate. Set name to '".$new_name."' and description to '".$new_description."'.");
+        $core->addLog($sessions->getUserName()." (UID: ".$sessions->getUserId().")", "Added new devicetemplate. Set name to '".$new_name."', description to '".$new_description."' and allow_quickadd to '".$allow_quickadd."'");
 
         return true;
     }
@@ -414,7 +433,7 @@ class devices {
 
         //Insert log
         global $core, $sessions;
-        $core->addLog($sessions->getUserId(), "Created new device. Set devicetemplateid to '".$devicetemplateid."', callsign to '".$callsign."', serialnumber to '".$serialnumber."' and notes to '".$notes."'.");
+        $core->addLog($sessions->getUserName()." (UID: ".$sessions->getUserId().")", "Created new device. Set devicetemplateid to '".$devicetemplateid."', callsign to '".$callsign."', serialnumber to '".$serialnumber."' and notes to '".$notes."'.");
 
         return true;
     }
