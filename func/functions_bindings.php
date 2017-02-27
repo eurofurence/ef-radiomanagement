@@ -420,6 +420,26 @@ class bindings {
         return true;
     }
 
+    /**
+     * Checks if the given user has premade binding-templates
+     *
+     * @param $userId User-ID of user to look for
+     * @retval True = User has templates available, False = No templates for user available
+     */
+    private function userHasBindingtemplates($userId) {
+        global $db;
+
+        $result = $db->query("SELECT COUNT(*) AS amount FROM `bindingtemplates` WHERE `userid`=".$db->escape($userId));
+
+        if($db->isError()) die($db->isError());
+
+        if(mysqli_fetch_object($result)->{'amount'} != 0) {
+            return true;
+        }
+
+        return false;
+    }
+
     /* addBinding_printSearchDeviceForm()
      *
      * This function prints the searchDeviceForm
@@ -439,15 +459,28 @@ class bindings {
                     <td>&nbsp;&nbsp;</td>
                     <td style="vertical-align: middle;">
                         <form method="POST" action="<?=domain?>index.php?p=add_binding" name="addBinding_searchDeviceForm">
-                            <span style="font-size: 12px;">S/N, Callsign, Name or DID</span><br/>
+
                             <?php if($deviceNotFound) { ?><span class="addBindingError"><b style="color: #EE0000;">Error, no device was found!</b></span><br/><?php } ?>
                             <input type="hidden" name="addBinding_searchDeviceForm_submitted" value="true" />
                             <input type="text" name="addBinding_searchDeviceForm_searchString" class="addBinding" value="" placeholder="Enter or scan search value!" size="30" autocomplete="off" required autofocus/><br/>
                             <input style="float: right; margin-top: 3px;" type="submit" value="Serach"/>
                         </form>
+                        <br/>
+                        <?php
+                            if(self::userHasBindingtemplates($_SESSION["addBinding"]["user"]->{"userid"})) {
+                                ?>
+                                <form method="POST" style="text-align:right;" action="<?=domain?>index.php?p=add_binding" name="addBinding_applyBindingtemplateForm">
+                                    <input type="hidden" name="addBinding_applyBindingtemplateForm_submitted" value="true" />
+                                    <span style="font-size: 12px;">Or:</span>
+                                    <input type="submit" value="Apply Binding-Template" />
+                                </form>
+                                <?php
+                            }
+                        ?>
                     </td>
                 </tr>
             </table>
+
         </span><br/><br class="removeOnPocketPc"/>
         <b>Selected user:</b>&nbsp;<br class="onlyPocketPc"/><?=$_SESSION["addBinding"]["user"]->{"nickname"}." (RID: ".$_SESSION["addBinding"]["user"]->{"regid"}." - UID: ".$_SESSION["addBinding"]["user"]->{"userid"}.")"?> -
         <a href="<?=domain?>index.php?p=add_binding">Cancel</a>
@@ -472,14 +505,58 @@ class bindings {
         return false;
     }
 
+    /**
+     * Checks if applyBindingtemplateForm wa submitted
+     *
+     * @retval True = Form was submitted, False = Form was not submitted
+     */
+    public function applyBindingtemplateForm_submitted() {
+        if($_POST["addBinding_applyBindingtemplateForm_submitted"]) { return true; }
+        return false;
+    }
+
+    /**
+     * Applies the given bindingtemplate
+     *
+     * @param $userid The user's id
+     */
+    public function applyBindingtemplate() {
+        if($_SESSION["addBinding"]["user"]->{"userid"} < 1) {
+            return false;
+        }
+
+        // Get bindingtemplate from database
+        global $db;
+        $templates = $db->query("SELECT * FROM `devicetemplates` dt, `bindingtemplates` bt
+                                 WHERE bt.`userid`=".$db->escape($_SESSION["addBinding"]["user"]->{"userid"})."
+                                 AND bt.`devicetemplateid` = dt.`devicetemplateid`");
+        if($db->isError()) die($db->isError());
+
+        // Add each device
+        while($device = mysqli_fetch_object($templates)) {
+            // Determine if device is quickadd-able
+            if($device->{'allow_quickadd'}) {
+                self::addBinding_addQuickaddDevice($device->{'devicetemplateid'}, false);
+            } else {
+                // Remember device for manual add!
+                if($_SESSION["addBinding"]["missingdevices"] === null) {
+                    $_SESSION["addBinding"]["missingdevices"] = array();
+                }
+
+                $_SESSION["addBinding"]["missingdevices"][] = $device;
+            }
+        }
+    }
+
     /* addBinding_selectDevice()
      *
      * This function selects a device to bind, based on the search or the DID-Override
      *
      * @param $searchString Search-String from searchDeviceForm
      * @param $deviceIdOverride Absolute Device-ID
+     * @param $redirect Continue displaying forms trough the process
      */
-    public function addBinding_selectDevice($searchString, $deviceIdOverride) {
+    public function addBinding_selectDevice($searchString, $deviceIdOverride, $redirect = true) {
         //Gain devices access
         $devices = new Devices();
 
@@ -496,10 +573,10 @@ class bindings {
         }
 
         //Check if devices were found
-        if(sizeof($searchedDevices)<1) { self::addBinding_printSearchDeviceForm(true); return false; }
+        if(sizeof($searchedDevices)<1) { if($redirect) self::addBinding_printSearchDeviceForm(true); return false; }
 
         //Check if multiple devices were found
-        if(sizeof($searchedDevices)>1) {
+        if(sizeof($searchedDevices)>1 && $redirect) {
             //Print selection table
             ?>
             <span class="content_block">
@@ -539,14 +616,27 @@ class bindings {
             return false;
         }
 
-        //Only one device found, add to SESSION and print review
-        $_SESSION["addBinding"]["devices"][array_values($searchedDevices)[0]->{"deviceid"}]=array_values($searchedDevices)[0];
-        self::addBinding_printReviewForm();
+        //Only one device found, add to SESSION and check if it was a missing device
+        $_SESSION["addBinding"]["devices"][array_values($searchedDevices)[0]->{"deviceid"}] = array_values($searchedDevices)[0];
+
+        if($_SESSION["addBinding"]["missingdevices"] !== null) {
+            $devicetplid = array_values($searchedDevices)[0]->{'devicetemplateid'};
+            foreach($_SESSION["addBinding"]["missingdevices"] as $key => $value) {
+                if($value->{'devicetemplateid'} == $devicetplid) {
+                    unset($_SESSION["addBinding"]["missingdevices"][$key]);
+                    break;
+                }
+            }
+        }
+
+
+        // Print overview
+        if($redirect) self::addBinding_printReviewForm();
 
         return true;
     }
 
-    public function addBinding_addQuickaddDevice($devicetemplateid) {
+    public function addBinding_addQuickaddDevice($devicetemplateid, $redirect = true) {
         global $db;
 
         // Get available devices from db
@@ -560,11 +650,12 @@ class bindings {
 
         // Check if devices are still available
         if(mysqli_num_rows($query_available_devices) < 1) {
-            self::addBinding_printSearchDeviceForm(true);
+            if($redirect) self::addBinding_printSearchDeviceForm(true);
             return false;
         }
 
         // Process query and remove all results that are allready about to be bound
+        if($_SESSION["addBinding"]["devices"] === null) { $_SESSION["addBinding"]["devices"] = array(); }
         $devicesAboutToBind = array_keys($_SESSION["addBinding"]["devices"]);
         $availableDeviceIds = array();
         while($row = mysqli_fetch_object($query_available_devices)) {
@@ -575,10 +666,10 @@ class bindings {
 
         // Select random id to minimize collisions when more people add devices simultaniously
         if(sizeof($availableDeviceIds) > 0) {
-            self::addBinding_selectDevice("", $availableDeviceIds[array_rand($availableDeviceIds, 1)]);
+            self::addBinding_selectDevice("", $availableDeviceIds[array_rand($availableDeviceIds, 1)], $redirect);
         } else {
             // No matching device found
-            self::addBinding_printSearchDeviceForm(true);
+            if($redirect) self::addBinding_printSearchDeviceForm(true);
         }
 
         return false;
@@ -610,6 +701,21 @@ class bindings {
                     </tr>
                     <?php
                     //Spit out devices
+
+                    if($_SESSION["addBinding"]["missingdevices"] !== null) {
+                        foreach($_SESSION["addBinding"]["missingdevices"] as $device) {
+                            ?>
+                            <tr class="devicelist_missing" title="Device needs to be assigned manually">
+                                <td>?</td>
+                                <td><?=$device->{"name"}?>&nbsp;(<?=$device->{"devicetemplateid"}?>)</td>
+                                <td>?</td>
+                                <td class="removeOnPocketPc">?</td>
+                                <td class="removeOnPocketPc">?</td>
+                                <td style="vertical-align: middle; text-align: center;"><a href="<?=domain?>index.php?p=add_binding&addBinding_additionalDevice=true" title="Add this device"><img src="<?=domain.dir_img?>addBinding.png"/></a></td>
+                            </tr>
+                    <?php
+                        }
+                    }
                     $row_color = "even";
                     foreach($_SESSION["addBinding"]["devices"] as $device) {
                         if($row_color == "even") { $row_color = "odd"; }
@@ -627,7 +733,7 @@ class bindings {
                 </table>
             </div>
             <span style="margin-top: 2px; width: 100%; text-align: center; display: inline-block;">
-                <a class="saveBinding" href="<?=domain?>index.php?p=add_binding&saveBinding=true" title="Create Binding"><img src="<?=domain.dir_img?>addBinding.png"/>&nbsp;<b>Create Binding!</b></a>
+                <a class="saveBinding <?= sizeof($_SESSION["addBinding"]["missingdevices"]) > 0 ? 'saveBindingDisabled' : ''?>" href="<?= sizeof($_SESSION["addBinding"]["missingdevices"]) < 1 ? domain.'index.php?p=add_binding&saveBinding=true' : '#'?>" title="Create Binding"><img src="<?=domain.dir_img?>addBinding.png"/>&nbsp;<b>Create Binding!</b></a>
                 <a class="addAnotherDevice" href="<?=domain?>index.php?p=add_binding&addBinding_additionalDevice=true" title="Add another device">Add another device</a>
             </span>
             <br/>

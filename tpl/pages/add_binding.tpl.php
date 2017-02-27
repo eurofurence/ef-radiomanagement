@@ -54,6 +54,14 @@ $bindings = new bindings();
             $bindings->addBinding_selectUser($_POST["addBinding_searchUserForm_searchString"], $_GET["searchUser_userid"]);
         } elseif($bindings->searchDeviceForm_submitted()) {
             $bindings->addBinding_selectDevice($_POST["addBinding_searchDeviceForm_searchString"], $_GET["searchDevice_deviceid"]);
+        } elseif($bindings->applyBindingtemplateForm_submitted()) {
+            $bindings->applyBindingtemplate();
+
+            if(sizeof($_SESSION["addBinding"]["devices"]) > 0) {
+                $bindings->addBinding_printReviewForm();
+            } else {
+                $bindings->addBinding_printSearchDeviceForm(false);
+            }
         } elseif($_GET["addBinding_additionalDevice"]=="true") {
             // Another device is wanted, check if quickadd device was selected
             if(isset($_GET['addQuickaddDevice'])) {

@@ -440,6 +440,12 @@ tr.devicelist_odd:hover, tr.devicelist_even:hover {
     background-color: rgba(0, 38, 124, 0.30);
 }
 
+tr.devicelist_missing {
+    background-color: #cf1b1f;
+    color: #ffffff;
+    font-weight: bold;
+}
+
 /* ##### Users-Styles ##### */
 div.userlist_wrapper {
     max-height: 450px;
@@ -512,6 +518,11 @@ a.saveBinding {
 
     padding: 10px 10px;
     margin: 5px;
+}
+
+a.saveBindingDisabled {
+    background-color: #aaaaaa !important;
+    color: #999999;
 }
 
 a.addAnotherDevice {
