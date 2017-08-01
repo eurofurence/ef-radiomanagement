@@ -825,7 +825,7 @@ class bindings {
         if(self::addBinding_saveBindings()) {
             ?>
             <b style="color: #11922E">Success, desired bindings were established! :)</b><br/><br/>
-            <a href="<?domain?>index.php?p=add_binding">Add another Binding</a>
+            <a href="<?=domain?>index.php?p=add_binding">Add another Binding</a>
             <?php
             unset($_SESSION["addBinding"]);
         } else {
@@ -1115,6 +1115,35 @@ class bindings {
         <b style="color: #11922E">Success, desired bindings were deleted :)</b><br/><br/>
         <a href="<?domain?>index.php?p=remove_binding">Delete other bindings</a>
         <?php
+    }
+
+    /**
+     * Creates an csv-export of all users with a collar-id
+     */
+    public function csvExportSecurityBindings() {
+        global $db;
+
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename=radio_bindings_'.date('Ymd_Hi').'.csv');
+
+        // Write onto output stream
+        $output = fopen('php://output', 'w');
+
+        // Get data from database
+        $data = $db->query("SELECT SQL_NO_CACHE devices.`callsign`, users.`nickname`, users.`regid`, users.`collarid`
+                            FROM `bindings` bindings, `devices` devices, `users` users
+                            WHERE
+                                bindings.`userid` = users.`userid` AND
+                                bindings.`deviceid` = devices.`deviceid` AND
+                                devices.`callsign` IS NOT NULL AND
+                                NOT devices.`callsign` = '' AND
+                                users.`collarid` IS NOT NULL AND
+                                NOT users.`collarid` = 0
+                            ORDER BY `nickname`, `callsign` ASC");
+
+        // Output data to csv
+        fputcsv($output, array('nickname', 'regid', 'collarid', 'callsign'));
+        while ($row = mysqli_fetch_assoc($data)) fputcsv($output, $row);
     }
 }
 
