@@ -1130,7 +1130,7 @@ class bindings {
         $output = fopen('php://output', 'w');
 
         // Get data from database
-        $data = $db->query("SELECT SQL_NO_CACHE devices.`callsign`, users.`nickname`, users.`regid`, users.`collarid`
+        $data = $db->query("SELECT SQL_NO_CACHE users.`nickname`, users.`regid`, users.`collarid`, devices.`callsign`
                             FROM `bindings` bindings, `devices` devices, `users` users
                             WHERE
                                 bindings.`userid` = users.`userid` AND
