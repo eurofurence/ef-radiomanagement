@@ -1113,7 +1113,7 @@ class bindings {
 
         ?>
         <b style="color: #11922E">Success, desired bindings were deleted :)</b><br/><br/>
-        <a href="<?domain?>index.php?p=remove_binding">Delete other bindings</a>
+        <a href="<?=domain?>index.php?p=remove_binding">Delete other bindings</a>
         <?php
     }
 
