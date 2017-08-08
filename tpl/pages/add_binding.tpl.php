@@ -75,7 +75,16 @@ $bindings = new bindings();
             //Remove desired device from $_SESSION and regenerate review-form
             unset($_SESSION["addBinding"]["devices"][$_GET["addBinding_removeDevice"]]);
 
-            if (sizeof($_SESSION["addBinding"]["devices"]) < 1) {
+            if (sizeof($_SESSION["addBinding"]["devices"]) < 1 && sizeof($_SESSION["addBinding"]["missingdevices"]) < 1) {
+                $bindings->addBinding_printSearchDeviceForm(false);
+            } else {
+                $bindings->addBinding_printReviewForm();
+            }
+        } elseif(isset($_GET['addBinding_removeMissingDevice'])) {
+            // Remove desired device from missing devices array
+            unset($_SESSION["addBinding"]["missingdevices"][$_GET['addBinding_removeMissingDevice']]);
+
+            if (sizeof($_SESSION["addBinding"]["devices"]) < 1 && sizeof($_SESSION["addBinding"]["missingdevices"]) < 1) {
                 $bindings->addBinding_printSearchDeviceForm(false);
             } else {
                 $bindings->addBinding_printReviewForm();

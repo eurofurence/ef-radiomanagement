@@ -703,7 +703,7 @@ class bindings {
                     //Spit out devices
 
                     if($_SESSION["addBinding"]["missingdevices"] !== null) {
-                        foreach($_SESSION["addBinding"]["missingdevices"] as $device) {
+                        foreach($_SESSION["addBinding"]["missingdevices"] as $deviceId => $device) {
                             ?>
                             <tr class="devicelist_missing" title="Device needs to be assigned manually">
                                 <td>?</td>
@@ -711,7 +711,7 @@ class bindings {
                                 <td>?</td>
                                 <td class="removeOnPocketPc">?</td>
                                 <td class="removeOnPocketPc">?</td>
-                                <td style="vertical-align: middle; text-align: center;"><a href="<?=domain?>index.php?p=add_binding&addBinding_additionalDevice=true" title="Add this device"><img src="<?=domain.dir_img?>addBinding.png"/></a></td>
+                                <td style="vertical-align: middle; text-align: center;"><a href="<?=domain?>index.php?p=add_binding&addBinding_additionalDevice=true" title="Add this device"><img src="<?=domain.dir_img?>addBinding.png"/></a>&nbsp;<a href="<?=domain?>index.php?p=add_binding&addBinding_removeMissingDevice=<?=$deviceId?>" title="Remove device!"><img class="tableAction" src="<?=domain.dir_img?>trashbin.png"/></a></td>
                             </tr>
                     <?php
                         }
