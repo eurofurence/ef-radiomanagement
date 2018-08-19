@@ -57,7 +57,7 @@ $bindings = new bindings();
         } elseif($bindings->applyBindingtemplateForm_submitted()) {
             $bindings->applyBindingtemplate();
 
-            if(sizeof($_SESSION["addBinding"]["devices"]) > 0) {
+            if(sizeof($_SESSION["addBinding"]["devices"]) > 0 || sizeof($_SESSION["addBinding"]["missingdevices"]) > 0) {
                 $bindings->addBinding_printReviewForm();
             } else {
                 $bindings->addBinding_printSearchDeviceForm(false);
